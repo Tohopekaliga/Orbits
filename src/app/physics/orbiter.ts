@@ -19,9 +19,13 @@ M: Mean Anomaly
   v: number = 0;
 
   M: number = 0;
+  E: number = 0;
 
   position: Vector2;
   velocity: Vector2;
+
+  //the body this Orbiter Orbits. If null/invalid, assumed to be the star.
+  parent: Orbiter;
 
   //computed rate of change for Mean Anomaly (M)
   protected meanRate: number = 0;
@@ -45,10 +49,15 @@ M: Mean Anomaly
     this.M = (this.M * Math.PI) / 180;
     this.w = (this.w * Math.PI) / 180;
 
-    //this.e = 0.9;
-
     this.velocity = new Vector2();
     this.position = new Vector2();
+
+    this.calculateOrbit();
+    this.calculatePosition();
+  }
+
+  setParent(parent: Orbiter) {
+    this.parent = parent;
 
     this.calculateOrbit();
     this.calculatePosition();
@@ -69,33 +78,47 @@ M: Mean Anomaly
     //console.log(this.name + ": M:" + this.M + ", v:" + this.v);
   }
 
-  protected calculatePosition() {
+  protected eccentricAnomaly() {
+    const epsilon = 0.00001;
+    const maxIter = 20;
+
+    //high eccentricity starts at a different value
+    let E = (this.e < 0.8) ? this.M : Math.PI;
+    let F = E - this.e * Math.sin(this.M) - this.M;
+
+    let i = 0;
+    while (Math.abs(F) > epsilon && i < maxIter) {
+      E = E - F / (1 - this.e * Math.cos(E));
+      F = E - this.e * Math.sin(E) - this.M;
+      i++;
+    }
+    
+    return E;
+  }
+
+  protected trueAnomaly() {
+
     //Eccentricity Vector (angle)
-    //E = M + e*(180/pi) * sin(M) * ( 1.0 + e * cos(M) )
-    let E =
-      this.M +
-      this.e *
-        //(180 / Math.PI) *
-        Math.sin(this.M) *
-        (1 + this.e * Math.cos(this.M));
+    let E = this.eccentricAnomaly();
 
-    //radius
-    //r = a(1 - e*cos(E))
-    //let r = this.a * (1 - this.e * Math.cos(E));
-    //tan(v/2) = sqrt((1+e)(1-e)) * tan(E/2)
+    let sin = Math.sin(E);
+    let cos = Math.cos(E);
+    
+    return Math.atan2(
+      Math.sqrt(1 - this.e * this.e) * sin,
+      cos - this.e
+    );
+  }
 
-    //approximation of true anomaly
-    this.v =
-      this.M +
-      (2 * this.e - (this.e * this.e * this.e) / 4) * Math.sin(this.M) +
-      1.25 * this.e * this.e;
+  protected calculatePosition() {
 
-    //this.v = this.M;
+    //True anomaly: Where the body really is
+    this.v = this.trueAnomaly();
 
+    //r: magnitude of x,y vector to body
     //r(v) = (a * (1-e^2)) / (1 + e*cos(v))
     let r = (this.a * (1 - this.e * this.e)) / (1 + this.e * Math.cos(this.v));
     //this.v = Math.PI;
-
 
     this.position.x = r * Math.cos(this.v);
     this.position.y = r * Math.sin(this.v);

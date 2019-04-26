@@ -1,6 +1,8 @@
 import { Orbiter } from "../physics/orbiter";
 import { OrbitalGroup } from "../physics/orbital-group";
 
+//1au = 149597870.7km
+
 export class SystemRenderer {
   ctx: CanvasRenderingContext2D;
 
