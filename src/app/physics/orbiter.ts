@@ -75,7 +75,6 @@ M: Mean Anomaly
     }
 
     this.calculatePosition();
-    //console.log(this.name + ": M:" + this.M + ", v:" + this.v);
   }
 
   protected eccentricAnomaly() {

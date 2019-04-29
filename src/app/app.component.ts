@@ -31,10 +31,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   solSystem: OrbitalGroup[] = null;
 
   //the data provided by JPL causes this constant.
-  dayStep = (2 * Math.PI) / 365;
+  dayStep:number = (2 * Math.PI) / 365;
   paused: boolean = true;
 
-  simDate = new Date();
+  simDate:Date = new Date();
+  stopDate:Date = new Date();
+  advancing:boolean = false;
 
   scale = 100;
   pinchScale = 100;
@@ -75,6 +77,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 	  
 	  let groupData = Sol[groupName];
 
+
       for (let c = 0; c < groupData.length; c++) {
         this.solSystem[g].addEntity(
           new CelestialBody(
@@ -89,11 +92,11 @@ export class AppComponent implements OnInit, AfterViewInit {
 
       this.totalBodies += groupData.length;
     }
-	
   }
 
   ngOnInit() {
     mainComponent = this;
+	
   }
 
   ngAfterViewInit() {
@@ -181,30 +184,74 @@ export class AppComponent implements OnInit, AfterViewInit {
   select(planet) {
     this.selectedBody = planet;
   }
+  
+  advance(days:number) {
+    this.stopDate = new Date(this.simDate.getTime() + days * 24 * 60 * 60 * 1000);
+    //this.stopDate.setDate();
+    this.advancing = true;
+    console.log("Forward!", this.simDate, this.stopDate);
+    if(this.paused)
+      this.pause();
+      
+  }
+  
+  finishAdvance() {
+    this.paused = true;
+    this.advancing = false;
+  }
+  
+  fpsUpdate(dt) {
+    
+    this.frameCounter++;
+    this.frameTimer += dt;
+
+    if (this.frameTimer > 1000) {
+      this.fps = this.frameCounter;
+      this.frameCounter = 0;
+      this.frameTimer -= 1;
+    }
+  }
 
   update() {
     let currentTime = Date.now();
     let dt = currentTime - this.lastUpdate;
+    this.lastUpdate = currentTime;
 
-    this.simDate = new Date(
+    this.fpsUpdate(dt);
+    
+    //TODO: Speed setting
+    //dt /= 60;// (1 day/sec, since it normally goes at ~ 2mo/sec)
+    
+    let newDate = new Date(
       this.simDate.getTime() + (dt / this.dayStep) * 24 * 60 * 60
     );
 
-	//change dt to seconds.
+  	//change dt to seconds.
     dt = dt / 1000;
-    this.lastUpdate = currentTime;
+    
+    if(this.advancing && newDate >= this.stopDate)
+    {
+      this.finishAdvance();
+      
+      let stopDiff = this.stopDate.getTime() - this.simDate.getTime();
+      let stepDiff = newDate.getTime() - this.simDate.getTime();
+      
+      dt *= stopDiff/stepDiff;
+      console.log(this.simDate, this.stopDate);
+      this.simDate = this.stopDate; //new Date(this.stopDate.getTime());
+    }
+    else {
+      this.simDate = newDate;
+    }
+    
+    this.updateSystem(dt);
+
+  }
+  
+  protected updateSystem(dt) {
 
     for (let group of this.solSystem) {
       group.update(dt);
-    }
-
-    this.frameCounter++;
-    this.frameTimer += dt;
-
-    if (this.frameTimer > 1) {
-      this.fps = this.frameCounter;
-      this.frameCounter = 0;
-      this.frameTimer -= 1;
     }
   }
 
@@ -233,6 +280,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.center.y = window.innerHeight / 2;
     this.area.x = window.innerWidth;
     this.area.y = window.innerHeight;
+    
+    this.render();
   }
 }
 

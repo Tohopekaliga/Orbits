@@ -11,8 +11,9 @@
     <span id="dateInfo">{{simDate | date:'yyyy-MM-dd HH:mm:ss'}}</span>
     <br />
     <span>FPS: {{fps | number:0}} Celestial Bodies: {{totalBodies | number:0}}</span>
-  </div>
-  <div id="controlPane" class="info">
+    <br />
+    <span>Advance By Days: <button (tap)="advance(1)">1</button><button (tap)="advance(5)">5</button><button (tap)="advance(10)">10</button>
+    <button (tap)="advance(30)">30</button><button (tap)="advance(60)">60</button></span>
   </div>
   <div id="planetInfo" class="info" *ngIf="selectedBody">
     Body: <span>{{selectedBody.name}}</span>
