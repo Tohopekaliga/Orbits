@@ -208,7 +208,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (this.frameTimer > 1000) {
       this.fps = this.frameCounter;
       this.frameCounter = 0;
-      this.frameTimer -= 1;
+      this.frameTimer -= 1000;
     }
   }
 
