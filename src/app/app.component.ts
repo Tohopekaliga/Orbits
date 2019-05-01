@@ -146,7 +146,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   onScroll(event) {
-    let delta = event.deltaY;
+    let delta = Math.min(Math.max(event.deltaY, -2), 2);
 
     if (delta > 0) {
       this.scale /= delta;
