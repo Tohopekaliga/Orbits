@@ -43,11 +43,10 @@ M: Mean Anomaly
     this.a = a;
     this.i = i;
     this.l = l;
-    this.w = w;
 
     //JPL provides the data in degrees, convert to radians.
-    this.M = (this.M * Math.PI) / 180;
-    this.w = (this.w * Math.PI) / 180;
+    this.M = (M * Math.PI) / 180;
+    this.w = (w * Math.PI) / 180;
 
     this.velocity = new Vector2();
     this.position = new Vector2();
@@ -117,7 +116,6 @@ M: Mean Anomaly
     //r: magnitude of x,y vector to body
     //r(v) = (a * (1-e^2)) / (1 + e*cos(v))
     let r = (this.a * (1 - this.e * this.e)) / (1 + this.e * Math.cos(this.v));
-    //this.v = Math.PI;
 
     this.position.x = r * Math.cos(this.v);
     this.position.y = r * Math.sin(this.v);

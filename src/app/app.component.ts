@@ -85,7 +85,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             groupData[c].e,
             groupData[c].a,
             groupData[c].w,
-            groupData[c].M
+            groupData[c].ma
           )
         );
       }
