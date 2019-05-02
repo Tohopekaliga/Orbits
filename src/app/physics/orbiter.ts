@@ -122,6 +122,11 @@ M: Mean Anomaly
 	
     //rotate the position to be oriented with the actual orbit
     this.position = this.position.rotate(this.w);
+
+    //now shift it into interplanetary coordinates if applicable
+    if (this.parent) {
+      this.position = this.position.sum(this.parent.position);
+    }
   }
 
   //use the orbital elements to compute mean rate & the ellipse drawing parameters

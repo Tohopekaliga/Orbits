@@ -14,6 +14,17 @@ export class CelestialBody extends Orbiter {
   }
 
   addMoon(moon: CelestialBody) {
+
+    moon.setParent(this);
     this.moons.push(moon);
+  }
+
+  update(dt) {
+
+    super.update(dt);
+
+    for (let moon of this.moons) {
+      moon.update(dt);
+    }
   }
 }
