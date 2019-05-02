@@ -5,6 +5,7 @@ import { OrbitalGroup } from "./physics/orbital-group";
 import { SystemRenderer } from "./engine/system-renderer";
 import Sol from "../assets/sol.json";
 import { isDefined } from '@angular/compiler/src/util';
+import { Vector2 } from './physics/math3d';
 
 var mainComponent;
 
@@ -15,15 +16,15 @@ var mainComponent;
 })
 export class AppComponent implements OnInit, AfterViewInit {
   title = "Space";
-  center = {
-    x: window.innerWidth / 2,
-    y: window.innerHeight / 2
-  };
+  center: Vector2 = new Vector2(
+    window.innerWidth / 2,
+    window.innerHeight / 2
+  );
 
-  area = {
-    x: window.innerWidth,
-    y: window.innerHeight
-  };
+  area: Vector2 = new Vector2(
+    window.innerWidth,
+    window.innerHeight
+  );
 
   // @ts-ignore syntactic sugar warning
   @ViewChild("systemCanvas") canvasRef: ElementRef;
@@ -161,6 +162,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     if (this.paused)
       this.render();
+  }
+
+  onFieldClick(event) {
+    console.log(event.center, this.center);
   }
 
   onScroll(event) {

@@ -19,6 +19,7 @@
     Body: <span>{{selectedBody.name}}</span>
   </div>
   <canvas
+    (tap)="onFieldClick($event)"
     id="systemCanvas"
     #systemCanvas
     [width]="area.x"
