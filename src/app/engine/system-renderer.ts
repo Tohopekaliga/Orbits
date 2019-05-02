@@ -1,5 +1,6 @@
 import { Orbiter } from "../physics/orbiter";
 import { OrbitalGroup } from "../physics/orbital-group";
+import { CelestialBody } from '../physics/celestial-body';
 
 //1au = 149597870.7km
 
@@ -53,6 +54,16 @@ export class SystemRenderer {
 		
   }
 
+  drawBodyWithMoons(body: CelestialBody, color: string = "blue", size: number = 4) {
+    this.drawCelestial(body, color, size);
+
+    if (this.scale > 200) {
+      for (let moon of body.moons) {
+        this.drawCelestial(moon, color, size - 1);
+      }
+    }
+  }
+
   drawCelestial(body: Orbiter, color:string = "blue", size:number = 4) {
     this.ctx.beginPath();
     this.ctx.arc(
@@ -73,8 +84,8 @@ export class SystemRenderer {
 	  for (let body of group.entityList) {
 		  if(group.paths) {
 			  this.drawOrbit(body);
-		  }
-          this.drawCelestial(body, group.color, group.drawSize);
+        }
+        this.drawBodyWithMoons(body, group.color, group.drawSize);
 	  }
   }
 

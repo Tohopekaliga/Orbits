@@ -1,5 +1,4 @@
-//import { Entity } from "./entity";
-import { Orbiter } from "./orbiter";
+import { CelestialBody } from './celestial-body';
 
 //orbital groups can be used to hold onto a bunch of orbital objects and handle blah blah
 
@@ -9,7 +8,7 @@ export class OrbitalGroup {
   //position of bodies in another star system.
   updating: boolean = true;
 
-  entityList: Orbiter[] = [];
+  entityList: CelestialBody[] = [];
 
   name: string;
   color: string;
@@ -44,7 +43,7 @@ export class OrbitalGroup {
     }
   }
 
-  addEntity(obj: Orbiter): void {
+  addEntity(obj: CelestialBody): void {
     this.entityList.push(obj);
   }
 }

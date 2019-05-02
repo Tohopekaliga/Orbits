@@ -4,6 +4,7 @@ import { CelestialBody } from "./physics/celestial-body";
 import { OrbitalGroup } from "./physics/orbital-group";
 import { SystemRenderer } from "./engine/system-renderer";
 import Sol from "../assets/sol.json";
+import { isDefined } from '@angular/compiler/src/util';
 
 var mainComponent;
 
@@ -42,7 +43,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   pinchScale = 100;
   pinching = false;
 
-  maxScale = 225;
+  maxScale = 22500000;
   minScale = 2.25;
 
   panPoint = { x: 0, y: 0 };
@@ -79,15 +80,32 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
       for (let c = 0; c < groupData.length; c++) {
-        this.solSystem[g].addEntity(
-          new CelestialBody(
-            groupData[c].name,
-            groupData[c].e,
-            groupData[c].a,
-            groupData[c].w,
-            groupData[c].ma
-          )
+
+        var body = new CelestialBody(
+          groupData[c].name,
+          groupData[c].e,
+          groupData[c].a,
+          groupData[c].w,
+          groupData[c].ma,
+          groupData[c].i,
+          groupData[c].l
         );
+
+        if (isDefined(groupData[c].satellites)) {
+          for (let moon of groupData[c].satellites) {
+            body.addMoon(new CelestialBody(
+              moon.name,
+              moon.e,
+              moon.a / 149597871, //JPL reports these as km, but we're operating on AU, which is 149597871km
+              moon.w,
+              moon.ma,
+              moon.i,
+              moon.l
+            ));
+          }
+        }
+
+        this.solSystem[g].addEntity(body);
       }
 
       this.totalBodies += groupData.length;
