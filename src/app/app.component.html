@@ -23,6 +23,7 @@
       <button (tap)="advance(30)">30</button><button (tap)="advance(60)">60</button>
     </span>
     <br />
+    <div class="scaleIndicator" [style.width]="scale + 'px'"><div>1 AU</div></div>
   </div>
   <div id="planetInfo" class="info" *ngIf="selectedBody">
     Body: <span>{{selectedBody.name}}</span>
