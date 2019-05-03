@@ -21,6 +21,9 @@ M: Mean Anomaly
   M: number = 0;
   E: number = 0;
 
+  mass: number = 0;
+  radius: number = 0;
+
   position: Vector2;
   velocity: Vector2;
 
@@ -38,7 +41,7 @@ M: Mean Anomaly
     ry: 0
   };
 
-  constructor(e = 0, a = 0, w = 0, M = 0, i = 0, l = 0) {
+  constructor(e:number = 0, a:number = 0, w:number = 0, M:number = 0, i:number = 0, l:number = 0, parent:Orbiter = null, mass:number = 0, radius:number = 0) {
     this.e = e;
     this.a = a;
 
@@ -54,6 +57,12 @@ M: Mean Anomaly
       this.w *= -1;
       this.M *= -1;
     }
+
+    this.mass = mass;
+    this.radius = radius;
+
+    this.parent = parent;
+
     this.velocity = new Vector2();
     this.position = new Vector2();
 

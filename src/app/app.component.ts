@@ -37,6 +37,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   paused: boolean = true;
   simSpeed: number = 0;
 
+  //TODO: Put this somewhere better
+  G: number = 6.67408 * 10e-11; //Gravitational constant
+
   //base rate of time is approximately 60days/s
   simSpeedFactor:number[] = [
     0,
@@ -91,6 +94,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
       for (let c = 0; c < groupData.length; c++) {
 
+        //JPL data defines mass as x * 10e24 kg, and only provides GM (mass * g) for most bodies.
+        let mass = groupData[c].mass ? groupData[c].mass * 10e24 : groupData[c].GM / this.G;
+
         var body = new CelestialBody(
           groupData[c].name ? groupData[c].name : groupData[c].full_name, //some TNOs don't have proper names, but do have designators in the full name.
           groupData[c].e,
@@ -98,7 +104,10 @@ export class AppComponent implements OnInit, AfterViewInit {
           groupData[c].w,
           groupData[c].ma,
           groupData[c].i,
-          groupData[c].l
+          groupData[c].l,
+          null, //parent body null means the star
+          mass,
+          groupData[c].radius
         );
 
         if (isDefined(groupData[c].satellites)) {
