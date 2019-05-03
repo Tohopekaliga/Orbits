@@ -7,13 +7,22 @@
   (pan)="onPan($event)"
 >
   <div id="infoPane" class="info">
-    <button id="pauseButton" (tap)="pause()">Start/Stop</button>
+    <!--<button id="pauseButton" (tap)="pause()">Start/Stop</button>-->
+    <span>
+      <a (tap)="pause()" [class.currentSpeed]="paused">❙❙</a>&nbsp;
+      <a (tap)="setSimSpeed(1)" [class.currentSpeed]="!paused">▶</a>
+      <a (tap)="setSimSpeed(2)" [class.currentSpeed]="!paused && simSpeed > 1">▶</a>
+      <a (tap)="setSimSpeed(3)" [class.currentSpeed]="!paused && simSpeed > 2">▶</a>
+    </span> | 
     <span id="dateInfo">{{simDate | date:'yyyy-MM-dd HH:mm:ss'}}</span>
     <br />
     <span>FPS: {{fps | number:0}} Celestial Bodies: {{totalBodies | number:0}}</span>
     <br />
-    <span>Advance By Days: <button (tap)="advance(1)">1</button><button (tap)="advance(5)">5</button><button (tap)="advance(10)">10</button>
-    <button (tap)="advance(30)">30</button><button (tap)="advance(60)">60</button></span>
+    <span>
+      Advance By Days: <button (tap)="advance(1)">1</button><button (tap)="advance(5)">5</button><button (tap)="advance(10)">10</button>
+      <button (tap)="advance(30)">30</button><button (tap)="advance(60)">60</button>
+    </span>
+    <br />
   </div>
   <div id="planetInfo" class="info" *ngIf="selectedBody">
     Body: <span>{{selectedBody.name}}</span>

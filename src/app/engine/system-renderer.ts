@@ -1,6 +1,7 @@
 import { Orbiter } from "../physics/orbiter";
 import { OrbitalGroup } from "../physics/orbital-group";
 import { CelestialBody } from '../physics/celestial-body';
+import { Vector2 } from '../physics/math3d';
 
 //1au = 149597870.7km
 
@@ -17,7 +18,7 @@ export class SystemRenderer {
   scale: number;
 
   constructor(ctx: CanvasRenderingContext2D) {
-    this.ctx = ctx;
+    this.ctx = ctx;;
   }
 
   setDimensions(

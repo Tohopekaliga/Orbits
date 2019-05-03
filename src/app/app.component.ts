@@ -35,6 +35,15 @@ export class AppComponent implements OnInit, AfterViewInit {
   //the data provided by JPL causes this constant.
   dayStep:number = (2 * Math.PI) / 365;
   paused: boolean = true;
+  simSpeed: number = 0;
+
+  //base rate of time is approximately 60days/s
+  simSpeedFactor:number[] = [
+    0,
+    1 / 60,
+    1 / 14,
+    1
+  ];
 
   simDate:Date = new Date();
   stopDate:Date = new Date();
@@ -140,6 +149,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
+  setSimSpeed(speed:number) {
+    if (this.paused)
+      this.pause();
+
+    this.simSpeed = speed;
+  }
+
   toggle(group) {
     group.updating = !group.updating;
   }
@@ -165,8 +181,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   onFieldClick(event) {
-    console.log(event.center, this.center);
-
     //convert the click location to simulation coordinates
     let point = new Vector2(event.center.x - this.center.x, event.center.y - this.center.y).divide(this.scale);
 
@@ -186,6 +200,9 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     this.selectedBody = closestPlanet;
+
+    if (this.paused)
+      this.render();
   }
 
   onScroll(event) {
@@ -230,11 +247,11 @@ export class AppComponent implements OnInit, AfterViewInit {
   
   advance(days:number) {
     this.stopDate = new Date(this.simDate.getTime() + days * 24 * 60 * 60 * 1000);
-    //this.stopDate.setDate();
+
     this.advancing = true;
-    console.log("Forward!", this.simDate, this.stopDate);
-    if(this.paused)
-      this.pause();
+
+    //gotta go fast
+    this.setSimSpeed(3);
       
   }
   
@@ -262,8 +279,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.fpsUpdate(dt);
     
-    //TODO: Speed setting
-    //dt /= 60;// (1 day/sec, since it normally goes at ~ 2mo/sec)
+    dt *= this.simSpeedFactor[this.simSpeed];
     
     let newDate = new Date(
       this.simDate.getTime() + (dt / this.dayStep) * 24 * 60 * 60
@@ -280,8 +296,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       let stepDiff = newDate.getTime() - this.simDate.getTime();
       
       dt *= stopDiff/stepDiff;
-      console.log(this.simDate, this.stopDate);
-      this.simDate = this.stopDate; //new Date(this.stopDate.getTime());
+      
+      this.simDate = this.stopDate;
     }
     else {
       this.simDate = newDate;
@@ -299,7 +315,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   render() {
-
     this.renderer.setDimensions(
       this.center.x,
       this.center.y,
