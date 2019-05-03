@@ -83,7 +83,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       for (let c = 0; c < groupData.length; c++) {
 
         var body = new CelestialBody(
-          groupData[c].name,
+          groupData[c].name ? groupData[c].name : groupData[c].full_name, //some TNOs don't have proper names, but do have designators in the full name.
           groupData[c].e,
           groupData[c].a,
           groupData[c].w,
