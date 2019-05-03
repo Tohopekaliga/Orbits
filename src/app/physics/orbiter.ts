@@ -1,7 +1,7 @@
-import { Vector2 } from "./math3d";
+import { Vector2, Convert } from "./math3d";
 
 export class Orbiter {
-  /*
+/*
 e: Eccentricity
 a: Semi-Major Axis
 i: Inclination
@@ -43,15 +43,14 @@ M: Mean Anomaly
     this.a = a;
 
     //JPL provides the data in degrees, convert to radians.
-    this.M = M * Math.PI / 180;
-    this.w = w * Math.PI / 180;
-    this.i = i * Math.PI / 180;
-    this.l = l * Math.PI / 180;
-    
+    this.M = Convert.DegreesToRad(M);
+    this.w = Convert.DegreesToRad(w);
+    this.i = Convert.DegreesToRad(i);
+    this.l = Convert.DegreesToRad(l);
+
     //as the simulation currently uses HTML canvas coordinates, the XY coordinate system is flipped.
     //i > Pi/2 means retrograde
-    if(this.i < Math.PI / 2)
-    {
+    if (this.i < Math.PI / 2) {
       this.w *= -1;
       this.M *= -1;
     }
@@ -97,7 +96,7 @@ M: Mean Anomaly
       F = E - this.e * Math.sin(E) - this.M;
       i++;
     }
-    
+
     return E;
   }
 
@@ -108,7 +107,7 @@ M: Mean Anomaly
 
     let sin = Math.sin(E);
     let cos = Math.cos(E);
-    
+
     return Math.atan2(
       Math.sqrt(1 - this.e * this.e) * sin,
       cos - this.e
@@ -126,7 +125,7 @@ M: Mean Anomaly
 
     this.position.x = r * Math.cos(this.v);
     this.position.y = r * Math.sin(this.v);
-	
+
     //rotate the position to be oriented with the actual orbit
     this.position = this.position.rotate(this.w);
 
@@ -145,21 +144,21 @@ M: Mean Anomaly
 
     this.ellipse.cx = this.e * this.a;
     this.ellipse.cy = 0;
-	
-	let center = new Vector2(this.ellipse.cx, this.ellipse.cy);
-	center = center.rotate(this.w);
-	
-	this.ellipse.cx = center.x;
-	this.ellipse.cy = center.y;
+
+    let center = new Vector2(this.ellipse.cx, this.ellipse.cy);
+    center = center.rotate(this.w);
+
+    this.ellipse.cx = center.x;
+    this.ellipse.cy = center.y;
 
     let period = 2 * Math.PI * Math.sqrt(this.a * this.a * this.a);
     this.meanRate = (2 * Math.PI) / period;
-    
+
     //invert everything for HTML canvas coordinates.
-    if(this.i < Math.PI)
+    if (this.i < Math.PI)
       this.meanRate *= -1;
   }
 
   //overwrite elements based on state vectors
-  protected recalcElements() {}
+  protected recalcElements() { }
 }

@@ -5,7 +5,7 @@ import { OrbitalGroup } from "./physics/orbital-group";
 import { SystemRenderer } from "./engine/system-renderer";
 import Sol from "../assets/sol.json";
 import { isDefined } from '@angular/compiler/src/util';
-import { Vector2 } from './physics/math3d';
+import { Vector2, Convert } from './physics/math3d';
 
 var mainComponent;
 
@@ -106,7 +106,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             body.addMoon(new CelestialBody(
               moon.name,
               moon.e,
-              moon.a / 149597871, //JPL reports these as km, but we're operating on AU, which is 149597871km
+              Convert.AUtoKM(moon.a), //JPL reports these as km, but we're operating on AU
               moon.w,
               moon.ma,
               moon.i,
