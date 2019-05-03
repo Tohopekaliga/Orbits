@@ -166,6 +166,26 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   onFieldClick(event) {
     console.log(event.center, this.center);
+
+    //convert the click location to simulation coordinates
+    let point = new Vector2(event.center.x - this.center.x, event.center.y - this.center.y).divide(this.scale);
+
+    //minimum click distance is based on scale.
+    let closestPlanet = null;
+    let closestMag = 10 / this.scale;
+
+    for (let b = 0; b < this.solSystem.length; b++) {
+      for (let c = 0; c < this.solSystem[b].entityList.length; c++) {
+        let magnitude = point.subtract(this.solSystem[b].entityList[c].position).magnitudeSq();
+
+        if (magnitude < closestMag) {
+          closestMag = magnitude;
+          closestPlanet = this.solSystem[b].entityList[c];
+        }
+      }
+    }
+
+    this.selectedBody = closestPlanet;
   }
 
   onScroll(event) {
