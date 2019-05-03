@@ -41,16 +41,16 @@ M: Mean Anomaly
   constructor(e = 0, a = 0, w = 0, M = 0, i = 0, l = 0) {
     this.e = e;
     this.a = a;
-    this.i = i;
-    this.l = l;
 
     //JPL provides the data in degrees, convert to radians.
-    this.M = (M * Math.PI) / 180;
-    this.w = (w * Math.PI) / 180;
+    this.M = M * Math.PI / 180;
+    this.w = w * Math.PI / 180;
+    this.i = i * Math.PI / 180;
+    this.l = l * Math.PI / 180;
     
     //as the simulation currently uses HTML canvas coordinates, the XY coordinate system is flipped.
-    //i > Pi means retrograde
-    if(this.i < Math.PI)
+    //i > Pi/2 means retrograde
+    if(this.i < Math.PI / 2)
     {
       this.w *= -1;
       this.M *= -1;
