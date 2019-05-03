@@ -106,8 +106,43 @@ export class Vector2 {
     let cos = Math.cos(radians);
     let sin = Math.sin(radians);
 	
-	return new Vector2(this.x * cos - this.y * sin, this.x * sin + this.y * cos);
+	  return new Vector2(this.x * cos - this.y * sin, this.x * sin + this.y * cos);
   }
 }
 
-export class Math3D {}
+export class Convert {
+
+  //AU per Light Year
+  static au_ly: number = 63241.077;
+
+  //KM per AU
+  static km_au: number = 149597870.7;
+
+  //Degrees-Radians ratio
+  static deg_rad: number = Math.PI / 180;
+
+  //Light Years to AU
+  static LYtoAU(ly: number) {
+    return ly * Convert.au_ly;
+  }
+
+  static AUtoLY(au: number) {
+    return au / Convert.au_ly;
+  }
+
+  static KMtoAU(km: number) {
+    return km * Convert.km_au;
+  }
+
+  static AUtoKM(au: number) {
+    return au / Convert.km_au;
+  }
+
+  static DegreesToRad(d: number) {
+    return d * Convert.deg_rad;
+  }
+
+  static RadToDegrees(r: number) {
+    return r / Convert.deg_rad;
+  }
+}

@@ -3,8 +3,6 @@ import { OrbitalGroup } from "../physics/orbital-group";
 import { CelestialBody } from '../physics/celestial-body';
 import { Vector2 } from '../physics/math3d';
 
-//1au = 149597870.7km
-
 export class SystemRenderer {
   ctx: CanvasRenderingContext2D;
 
