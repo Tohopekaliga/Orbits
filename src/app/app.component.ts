@@ -199,10 +199,29 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     }
 
+    if (!closestPlanet) {
+      this.deselectBody();
+    }
+
     this.selectedBody = closestPlanet;
 
-    if (this.paused)
+    if (this.selectedBody) {
+      //reset camera to center: It will be centered on the selected body.
+      this.center = this.area.divide(2);
+    }
+
+    if (this.paused) {
       this.render();
+    }
+
+  }
+
+  deselectBody() {
+    if (this.selectedBody) {
+      //force the center point to stay where it is.
+      this.center = this.area.divide(2).sum(this.selectedBody.position.multiply(this.scale));
+      this.selectedBody = null;
+    }
   }
 
   onScroll(event) {
@@ -315,9 +334,15 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   render() {
+
+    let center = this.center;
+
+    if (this.selectedBody)
+      center = center.subtract(this.selectedBody.position.multiply(this.scale));
+
     this.renderer.setDimensions(
-      this.center.x,
-      this.center.y,
+      center.x,
+      center.y,
       this.area.x,
       this.area.y,
       this.scale
