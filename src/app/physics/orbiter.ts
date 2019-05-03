@@ -47,7 +47,14 @@ M: Mean Anomaly
     //JPL provides the data in degrees, convert to radians.
     this.M = (M * Math.PI) / 180;
     this.w = (w * Math.PI) / 180;
-
+    
+    //as the simulation currently uses HTML canvas coordinates, the XY coordinate system is flipped.
+    //i > Pi means retrograde
+    if(this.i < Math.PI)
+    {
+      this.w *= -1;
+      this.M *= -1;
+    }
     this.velocity = new Vector2();
     this.position = new Vector2();
 
@@ -147,6 +154,10 @@ M: Mean Anomaly
 
     let period = 2 * Math.PI * Math.sqrt(this.a * this.a * this.a);
     this.meanRate = (2 * Math.PI) / period;
+    
+    //invert everything for HTML canvas coordinates.
+    if(this.i < Math.PI)
+      this.meanRate *= -1;
   }
 
   //overwrite elements based on state vectors
