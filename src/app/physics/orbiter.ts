@@ -189,7 +189,7 @@ M: Mean Anomaly
     }
 
     //invert everything for HTML canvas coordinates.
-    if (this.i < Math.PI)
+    if (this.i < Math.PI / 2)
       this.meanRate *= -1;
   }
 
