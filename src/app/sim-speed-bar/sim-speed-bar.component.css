@@ -1,4 +1,10 @@
 
 .currentSpeed {
     color:lime;
+    fill:lime !important;
   }
+  
+.simSpeedTriangle {
+  width: 1.5em;
+  padding: 2px;
+}

@@ -1,5 +1,10 @@
+
 <span>
   <a (tap)="pause()" [class.currentSpeed]="paused">❙❙</a>&nbsp;
-  <a *ngFor="let level of levels; let i = index"
-    (tap)=speedChange(i) [class.currentSpeed]="!paused && currentLevel >= i">▶</a>
+  <!--<a *ngFor="let level of levels; let i = index"
+    (tap)=speedChange(i) [class.currentSpeed]="!paused && currentLevel >= i">▶</a>-->
+  <svg *ngFor="let level of levels; let i = index" class="simSpeedTriangle"
+    (tap)=speedChange(i) viewBox="0 0 50 100">
+    <polygon points="1,1 49,49 1,100" style="fill:white" [class.currentSpeed]="!paused && currentLevel >= i" />
+  </svg>
 </span>
