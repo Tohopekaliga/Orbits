@@ -165,6 +165,10 @@ export class AppComponent implements OnInit, AfterViewInit {
   onPinchStart(event) {
     this.pinchScale = this.scale;
     this.pinching = true;
+    
+    if(!this.selectedBody) {
+      this.onPanStart(event);
+    }
   }
 
   onPinchEnd(event) {
@@ -176,6 +180,12 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.scale = this.pinchScale * event.scale;
 
       this.clampScale();
+      
+      //if a body is selected, don't pan,
+      //otherwise do so.
+      if(!this.selectedBody) {
+        this.onPan(event);
+      }
     }
 
     if (this.paused)
@@ -185,10 +195,30 @@ export class AppComponent implements OnInit, AfterViewInit {
   onFieldClick(event) {
     //convert the click location to simulation coordinates
     let point = new Vector2(event.center.x - this.center.x, event.center.y - this.center.y).divide(this.scale);
+    
+    //account for current body focus
+    if(this.selectedBody) {
+      point = point.sum(this.selectedBody.position);
+    }
 
     //minimum click distance is based on scale.
     let closestPlanet = null;
     let closestMag = 10 / this.scale;
+    
+    //scale to view Moons. Change this when config is set up for that.
+    if(this.scale > 200 && this.selectedBody) {
+      
+      let parentBody = this.selectedBody.parent ? this.selectedBody.parent : this.selectedBody;
+      
+      for(let m = 0; m < parentBody.moons.length; m++) {
+        let magnitude = point.subtract(parentBody.moons[m].position).magnitudeSq();
+
+        if (magnitude < closestMag) {
+          closestMag = magnitude;
+          closestPlanet = parentBody.moons[m];
+        }
+      }
+    }
 
     for (let b = 0; b < this.solSystem.length; b++) {
       for (let c = 0; c < this.solSystem[b].entityList.length; c++) {
@@ -201,8 +231,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
     }
 
-    if (!closestPlanet) {
-      this.deselectBody();
+    if (!closestPlanet && event.tapCount == 1) {
+      return;
     }
 
     this.selectedBody = closestPlanet;
@@ -221,7 +251,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   deselectBody() {
     if (this.selectedBody) {
       //force the center point to stay where it is.
-      this.center = this.area.divide(2).sum(this.selectedBody.position.multiply(this.scale));
+      this.center = this.area.divide(2).subtract(this.selectedBody.position.multiply(this.scale));
       this.selectedBody = null;
     }
   }
@@ -247,9 +277,14 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   onPan(event) {
-    this.center.x = this.panPoint.x + event.deltaX;
-    this.center.y = this.panPoint.y + event.deltaY;
-
+    if(!this.selectedBody || event.deltaX > 50 || event.deltaY > 50) {
+    
+      this.deselectBody();
+      
+      this.center.x = this.panPoint.x + event.deltaX;
+      this.center.y = this.panPoint.y + event.deltaY;
+    }
+    
     if (this.paused)
       this.render();
   }
