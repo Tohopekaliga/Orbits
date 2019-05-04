@@ -111,6 +111,8 @@ export class AppComponent implements OnInit, AfterViewInit {
               body
             );
 
+            body.addMoon(moonEntity);
+
             moonEntity.setMeanMotion(moon.n);
           }
         }

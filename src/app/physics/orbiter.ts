@@ -79,10 +79,13 @@ M: Mean Anomaly
   }
 
   setParent(parent: Orbiter) {
-    this.parent = parent;
 
-    this.calculateOrbit();
-    this.calculatePosition();
+    if(this.parent != parent) {
+      this.parent = parent;
+
+      this.calculateOrbit();
+      this.calculatePosition();
+    }
   }
 
   setMeanMotion(n:number) {
