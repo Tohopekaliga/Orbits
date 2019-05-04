@@ -4,7 +4,6 @@ import { CelestialBody } from "./physics/celestial-body";
 import { OrbitalGroup } from "./physics/orbital-group";
 import { SystemRenderer } from "./engine/system-renderer";
 import Sol from "../assets/sol.json";
-import { isDefined } from '@angular/compiler/src/util';
 import { Vector2, Convert } from './physics/math3d';
 
 var mainComponent;
@@ -98,7 +97,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           groupData[c].radius
         );
 
-        if (isDefined(groupData[c].satellites)) {
+        if (groupData[c].satellites != null) {
           for (let moon of groupData[c].satellites) {
             let moonEntity = new CelestialBody(
               moon.name,
