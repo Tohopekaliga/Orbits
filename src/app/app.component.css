@@ -24,10 +24,6 @@
   right: 30%;
 }
 
-.currentSpeed {
-  color:lime;
-}
-
 .scaleIndicator {
   text-align:left;
   white-space:nowrap;

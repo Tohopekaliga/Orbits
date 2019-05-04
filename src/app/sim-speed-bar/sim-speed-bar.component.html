@@ -1,0 +1,5 @@
+<span>
+  <a (tap)="pause()" [class.currentSpeed]="paused">❙❙</a>&nbsp;
+  <a *ngFor="let level of levels; let i = index"
+    (tap)=speedChange(i) [class.currentSpeed]="!paused && currentLevel >= i">▶</a>
+</span>

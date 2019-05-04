@@ -38,7 +38,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   //base rate of time is approximately 60days/s
   simSpeedFactor:number[] = [
-    0,
     1 / 60,
     1 / 14,
     1
@@ -153,6 +152,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   setSimSpeed(speed:number) {
     if (this.paused)
       this.pause();
+
+    console.log(speed);
 
     this.simSpeed = speed;
   }
@@ -306,7 +307,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.advancing = true;
 
     //gotta go fast
-    this.setSimSpeed(3);
+    this.setSimSpeed(2);
       
   }
   
