@@ -37,11 +37,11 @@ export class SystemRenderer {
     this.ctx.clearRect(0, 0, this.dimensions.width, this.dimensions.height);
   }
   
-  drawOrbit(body:Orbiter) {
+  drawOrbit(body:Orbiter, origin:Vector2) {
 	this.ctx.beginPath();
 	this.ctx.ellipse(
-		this.dimensions.cx - body.ellipse.cx * this.scale,
-		this.dimensions.cy - body.ellipse.cy * this.scale,
+		this.dimensions.cx - body.ellipse.cx * this.scale + origin.x * this.scale,
+		this.dimensions.cy - body.ellipse.cy * this.scale + origin.y * this.scale,
 		body.ellipse.rx * this.scale,
 		body.ellipse.ry * this.scale,
 		body.w,
@@ -58,6 +58,7 @@ export class SystemRenderer {
 
     if (this.scale > 200) {
       for (let moon of body.moons) {
+        this.drawOrbit(moon, body.position);
         this.drawCelestial(moon, color, size - 1);
       }
     }
@@ -79,10 +80,12 @@ export class SystemRenderer {
   }
   
   drawGroup(group:OrbitalGroup) {
+
+    let origin = new Vector2();
 	  
 	  for (let body of group.entityList) {
 		  if(group.paths) {
-			  this.drawOrbit(body);
+			  this.drawOrbit(body, origin);
         }
         this.drawBodyWithMoons(body, group.color, group.drawSize);
 	  }

@@ -1,4 +1,5 @@
 import { Vector2, Convert } from "./math3d";
+import { isNull } from 'util';
 
 export class Orbiter {
 /*
@@ -21,8 +22,13 @@ M: Mean Anomaly
   M: number = 0;
   E: number = 0;
 
+  n: number = 0;
+
   mass: number = 0;
   radius: number = 0;
+
+  //computed value of mass * G, used for gravitation calculations
+  GM: number = 0;
 
   position: Vector2;
   velocity: Vector2;
@@ -61,6 +67,8 @@ M: Mean Anomaly
     this.mass = mass;
     this.radius = radius;
 
+    this.GM = mass * Convert.G;
+
     this.parent = parent;
 
     this.velocity = new Vector2();
@@ -75,6 +83,11 @@ M: Mean Anomaly
 
     this.calculateOrbit();
     this.calculatePosition();
+  }
+
+  setMeanMotion(n:number) {
+    this.n = n;
+    this.calculateOrbit();
   }
 
   update(dt) {
@@ -160,8 +173,17 @@ M: Mean Anomaly
     this.ellipse.cx = center.x;
     this.ellipse.cy = center.y;
 
-    let period = 2 * Math.PI * Math.sqrt(this.a * this.a * this.a);
-    this.meanRate = (2 * Math.PI) / period;
+    if(!isNull(this.parent) && this.n) {
+      //let a = this.a//Convert.AUtoKM(this.a);
+      //this.meanRate = Math.sqrt(this.parent.GM / (a * a * a));
+      //TODO: Fix the time
+      this.meanRate = Convert.DegreesToRad(this.n) * 55;
+    }
+    else {
+      let period = 2 * Math.PI * Math.sqrt(this.a * this.a * this.a);
+      this.meanRate = (2 * Math.PI) / period;
+
+    }
 
     //invert everything for HTML canvas coordinates.
     if (this.i < Math.PI)
