@@ -4,7 +4,17 @@
     fill:lime !important;
   }
   
-.simSpeedTriangle {
-  width: 1.5em;
-  padding: 2px;
+.simSpeedIcon {
+  height: 2em;
+  margin: 2px;
+}
+
+.speedBar {
+  margin: 0.5ex;
+  margin-bottom: 0;
+  display: inline-block;
+}
+
+.speedBar svg {
+  fill:white;
 }

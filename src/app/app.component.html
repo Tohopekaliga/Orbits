@@ -7,12 +7,10 @@
   (pan)="onPan($event)"
 >
   <div id="infoPane" class="info">
-    <!--<button id="pauseButton" (tap)="pause()">Start/Stop</button>-->
     <sim-speed-bar [levels]="simSpeedFactor" [paused]="paused"
     [currentLevel]="simSpeed"
     (pauseToggle)="pause()"
     (speedClick)="setSimSpeed($event)"></sim-speed-bar>
-    | 
     <span id="dateInfo">{{simDate | date:'yyyy-MM-dd HH:mm:ss'}}</span>
     <br />
     <span>FPS: {{fps | number:0}} Celestial Bodies: {{totalBodies | number:0}}</span>
