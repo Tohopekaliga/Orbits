@@ -177,8 +177,6 @@ M: Mean Anomaly
     this.ellipse.cy = center.y;
 
     if(!isNull(this.parent) && this.n) {
-      //let a = this.a//Convert.AUtoKM(this.a);
-      //this.meanRate = Math.sqrt(this.parent.GM / (a * a * a));
       //TODO: Fix the time
       this.meanRate = Convert.DegreesToRad(this.n) * 55;
     }

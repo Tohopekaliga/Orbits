@@ -101,7 +101,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             let moonEntity = new CelestialBody(
               moon.name,
               moon.e,
-              Convert.AUtoKM(moon.a), //JPL reports these as km, but we're operating on AU
+              Convert.KMtoAU(moon.a), //JPL reports these as km, but we're operating on AU
               moon.w,
               moon.ma,
               moon.i,

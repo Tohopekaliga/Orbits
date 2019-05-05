@@ -134,11 +134,11 @@ export class Convert {
   }
 
   static KMtoAU(km: number) {
-    return km * Convert.km_au;
+    return km / Convert.km_au;
   }
 
   static AUtoKM(au: number) {
-    return au / Convert.km_au;
+    return au * Convert.km_au;
   }
 
   static DegreesToRad(d: number) {
