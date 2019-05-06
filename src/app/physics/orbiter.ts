@@ -28,6 +28,12 @@ M: Mean Anomaly
   mass: number = 0;
   radius: number = 0;
 
+  //μ, standard gravitational parameter, G(M+m). Computed with orbit
+  GM: number;
+
+  //semi-minor axis
+  b: number;
+
   position: Vector2;
   velocity: Vector2;
 
@@ -70,7 +76,7 @@ M: Mean Anomaly
     this.position = new Vector2();
 
     this.calculateOrbit();
-    this.calculatePosition();
+    this.calculateVectors();
   }
 
   setParent(parent: PointMass) {
@@ -79,7 +85,7 @@ M: Mean Anomaly
       this.parent = parent;
 
       this.calculateOrbit();
-      this.calculatePosition();
+      this.calculateVectors();
     }
   }
 
@@ -99,7 +105,7 @@ M: Mean Anomaly
       this.M += 2 * Math.PI;
     }
 
-    this.calculatePosition();
+    this.calculateVectors();
   }
 
   protected eccentricAnomaly() {
@@ -141,18 +147,18 @@ M: Mean Anomaly
 
     let a = Convert.AUtoKM(this.a) * 1000;
     let mass = this.parent.mass + this.mass;
-    let GM = Convert.G * mass;
+    this.GM = Convert.G * mass;
     let a_cubed = a * a * a;
 
     //Mean Motion in days
-    this.meanMotion = Math.sqrt(GM / a_cubed) * 60 * 60 * 24;
+    this.meanMotion = Math.sqrt(this.GM / a_cubed) * 60 * 60 * 24;
 
     //flip rotation direction to account for inverted Y axis.
     if (this.i < Math.PI / 2)
       this.meanMotion *= -1;
   }
 
-  protected calculatePosition() {
+  protected calculateVectors() {
 
     //True anomaly: Where the body really is
     this.v = this.trueAnomaly();
@@ -171,6 +177,18 @@ M: Mean Anomaly
     if (this.parent) {
       this.position = this.position.sum(this.parent.position);
     }
+
+
+    //Instantaneous velocity: sqrt(μ*(2/r - 1/a))
+    let a = Convert.AUtoKM(this.a) * 1000;
+    let v = Math.sqrt(this.GM * (2 / r - 1 / a));
+
+    //TODO
+    //tangent vector
+    //this will need gravity applied to it for proper motion,
+    //but base Orbiter does not use this for position calculation
+    
+
   }
 
   //use the orbital elements to compute mean rate & the ellipse drawing parameters
@@ -178,7 +196,8 @@ M: Mean Anomaly
     //semi-major axis corresponds to radius along apo/peri line
     this.ellipse.rx = this.a;
     //semi-minor axis
-    this.ellipse.ry = this.a * Math.sqrt(1 - this.e * this.e);
+    this.b = this.a * Math.sqrt(1 - this.e * this.e);
+    this.ellipse.ry = this.b;
 
     this.ellipse.cx = this.e * this.a;
     this.ellipse.cy = 0;
