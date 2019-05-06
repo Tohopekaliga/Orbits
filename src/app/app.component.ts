@@ -156,8 +156,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (this.paused)
       this.pause();
 
-    console.log(speed);
-
     this.simSpeed = speed;
   }
 
@@ -310,7 +308,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.advancing = true;
 
     //gotta go fast
-    this.setSimSpeed(2);
+    this.setSimSpeed(this.simSpeedFactor.length - 1);
       
   }
   
