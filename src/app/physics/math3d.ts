@@ -122,7 +122,7 @@ export class Convert {
   static deg_rad: number = Math.PI / 180;
 
   //Universal Gravitation Constant
-  static G: number = 6.67408 * 10e-11;
+  static G: number = 6.67408e-11;
 
   //Light Years to AU
   static LYtoAU(ly: number) {

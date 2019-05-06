@@ -83,7 +83,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       for (let c = 0; c < groupData.length; c++) {
 
         //JPL data defines mass as x * 10e24 kg, and only provides GM (mass * g) for most bodies.
-        let mass = groupData[c].mass ? groupData[c].mass * 10e24 : groupData[c].GM / Convert.G;
+        let mass = groupData[c].mass ? groupData[c].mass * 1e24 : groupData[c].GM / Convert.G;
 
         var body = new CelestialBody(
           groupData[c].name ? groupData[c].name : groupData[c].full_name, //some TNOs don't have proper names, but do have designators in the full name.
@@ -108,7 +108,8 @@ export class AppComponent implements OnInit, AfterViewInit {
               moon.ma,
               moon.i,
               moon.l,
-              body
+              body,
+              moon.mass ? moon.mass : 0
             );
 
             body.addMoon(moonEntity);

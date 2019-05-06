@@ -37,7 +37,7 @@ M: Mean Anomaly
   parent: Orbiter;
 
   //computed rate of change for Mean Anomaly (M)
-  protected meanRate: number = 0;
+  protected meanMotion: number = 0;
   //private essentricAnomaly: number = 0;
 
   ellipse = {
@@ -94,7 +94,7 @@ M: Mean Anomaly
   }
 
   update(dt) {
-    this.M += this.meanRate * dt;
+    this.M += this.meanMotion * dt;
 
     while (this.M > 2 * Math.PI) {
       this.M -= 2 * Math.PI;
@@ -139,6 +139,35 @@ M: Mean Anomaly
     );
   }
 
+  protected computeMeanMotion() {
+
+    if (!this.parent) {
+      //Given JPL data of the Solar System, and AU being the standard unit
+      //this equation works for bodies orbiting the Sun.
+      let period = 2 * Math.PI * Math.sqrt(this.a * this.a * this.a);
+      this.meanMotion = (2 * Math.PI) / period;
+    }
+    else {
+      //a in meters, M as mass of parent, m as mass of body
+      //n = sqrt( G(M+m)/a^3 ), radians/second
+
+      let a = Convert.AUtoKM(this.a) * 1000;
+      let mass = this.parent.mass + this.mass;
+      let GM = Convert.G * mass;
+      let a_cubed = a * a * a;
+
+      //Mean Motion in days
+      this.meanMotion = Math.sqrt(GM / a_cubed) * 60 * 60 * 24;
+
+      //TODO: Fix time calculations so this isn't necessary.
+      this.meanMotion *= 60;
+    }
+
+    //flip rotation direction to account for inverted Y axis.
+    if (this.i < Math.PI / 2)
+      this.meanMotion *= -1;
+  }
+
   protected calculatePosition() {
 
     //True anomaly: Where the body really is
@@ -176,19 +205,8 @@ M: Mean Anomaly
     this.ellipse.cx = center.x;
     this.ellipse.cy = center.y;
 
-    if(!isNull(this.parent) && this.n) {
-      //TODO: Fix the time
-      this.meanRate = Convert.DegreesToRad(this.n) * 55;
-    }
-    else {
-      let period = 2 * Math.PI * Math.sqrt(this.a * this.a * this.a);
-      this.meanRate = (2 * Math.PI) / period;
+    this.computeMeanMotion();
 
-    }
-
-    //invert everything for HTML canvas coordinates.
-    if (this.i < Math.PI / 2)
-      this.meanRate *= -1;
   }
 
   //overwrite elements based on state vectors
