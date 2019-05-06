@@ -85,7 +85,11 @@ export class SystemRenderer {
 	  
 	  for (let body of group.entityList) {
 		  if(group.paths) {
-			  this.drawOrbit(body, origin);
+        //Stop drawing planetary orbits above a certain zoom
+        //because the computation to place the planets isn't
+        //perfectly lined up.
+        if(this.scale < 5000)
+			    this.drawOrbit(body, origin);
         }
         this.drawBodyWithMoons(body, group.color, group.drawSize);
 	  }
