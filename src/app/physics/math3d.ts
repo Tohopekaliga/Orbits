@@ -148,4 +148,8 @@ export class Convert {
   static RadToDegrees(r: number) {
     return r / Convert.deg_rad;
   }
+
+  static DaysToSeconds(d: number) {
+    return d * 24 * 60 * 60;
+  }
 }

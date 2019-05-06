@@ -32,9 +32,6 @@ export class OrbitalGroup {
   update(dt: number): void {
     this.timeSinceUpdate += dt;
     if (this.updating) {
-      if (this.timeSinceUpdate > dt * 2) {
-        console.log(this.timeSinceUpdate);
-      }
       for (let c = 0; c < this.entityList.length; c++) {
         this.entityList[c].update(this.timeSinceUpdate);
       }

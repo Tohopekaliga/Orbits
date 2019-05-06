@@ -1,7 +1,8 @@
 import { Vector2, Convert } from "./math3d";
+import { PointMass } from './point-mass';
 import { isNull } from 'util';
 
-export class Orbiter {
+export class Orbiter implements PointMass {
 /*
 e: Eccentricity
 a: Semi-Major Axis
@@ -27,18 +28,14 @@ M: Mean Anomaly
   mass: number = 0;
   radius: number = 0;
 
-  //computed value of mass * G, used for gravitation calculations
-  GM: number = 0;
-
   position: Vector2;
   velocity: Vector2;
 
-  //the body this Orbiter Orbits. If null/invalid, assumed to be the star.
-  parent: Orbiter;
+  //the body this Orbiter Orbits.
+  parent: PointMass;
 
   //computed rate of change for Mean Anomaly (M)
   protected meanMotion: number = 0;
-  //private essentricAnomaly: number = 0;
 
   ellipse = {
     cx: 0,
@@ -47,7 +44,7 @@ M: Mean Anomaly
     ry: 0
   };
 
-  constructor(e:number = 0, a:number = 0, w:number = 0, M:number = 0, i:number = 0, l:number = 0, parent:Orbiter = null, mass:number = 0, radius:number = 0) {
+  constructor(e:number = 0, a:number = 0, w:number = 0, M:number = 0, i:number = 0, l:number = 0, parent:PointMass = null, mass:number = 0, radius:number = 0) {
     this.e = e;
     this.a = a;
 
@@ -67,8 +64,6 @@ M: Mean Anomaly
     this.mass = mass;
     this.radius = radius;
 
-    this.GM = mass * Convert.G;
-
     this.parent = parent;
 
     this.velocity = new Vector2();
@@ -78,7 +73,7 @@ M: Mean Anomaly
     this.calculatePosition();
   }
 
-  setParent(parent: Orbiter) {
+  setParent(parent: PointMass) {
 
     if(this.parent != parent) {
       this.parent = parent;
@@ -141,27 +136,16 @@ M: Mean Anomaly
 
   protected computeMeanMotion() {
 
-    if (!this.parent) {
-      //Given JPL data of the Solar System, and AU being the standard unit
-      //this equation works for bodies orbiting the Sun.
-      let period = 2 * Math.PI * Math.sqrt(this.a * this.a * this.a);
-      this.meanMotion = (2 * Math.PI) / period;
-    }
-    else {
-      //a in meters, M as mass of parent, m as mass of body
-      //n = sqrt( G(M+m)/a^3 ), radians/second
+    //a in meters, M as mass of parent, m as mass of body
+    //n = sqrt( G(M+m)/a^3 ), radians/second
 
-      let a = Convert.AUtoKM(this.a) * 1000;
-      let mass = this.parent.mass + this.mass;
-      let GM = Convert.G * mass;
-      let a_cubed = a * a * a;
+    let a = Convert.AUtoKM(this.a) * 1000;
+    let mass = this.parent.mass + this.mass;
+    let GM = Convert.G * mass;
+    let a_cubed = a * a * a;
 
-      //Mean Motion in days
-      this.meanMotion = Math.sqrt(GM / a_cubed) * 60 * 60 * 24;
-
-      //TODO: Fix time calculations so this isn't necessary.
-      this.meanMotion *= 60;
-    }
+    //Mean Motion in days
+    this.meanMotion = Math.sqrt(GM / a_cubed) * 60 * 60 * 24;
 
     //flip rotation direction to account for inverted Y axis.
     if (this.i < Math.PI / 2)

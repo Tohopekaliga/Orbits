@@ -1,5 +1,6 @@
 import { Component, ViewChild, ElementRef, OnInit, AfterViewInit } from "@angular/core";
 import { HostListener } from "@angular/core";
+import { StellarBody } from "./physics/stellar-body";
 import { CelestialBody } from "./physics/celestial-body";
 import { OrbitalGroup } from "./physics/orbital-group";
 import { SystemRenderer } from "./engine/system-renderer";
@@ -30,19 +31,17 @@ export class AppComponent implements OnInit, AfterViewInit {
   renderer: SystemRenderer = null;
 
   solSystem: OrbitalGroup[] = null;
+  sol: StellarBody;
 
-  //the data provided by JPL causes this constant.
-  dayStep:number = (2 * Math.PI) / 365;
   paused: boolean = true;
   simSpeed: number = 0;
-
-  //base rate of time is 60days/s
-  simSpeedFactor:number[] = [
-    (((1/60)/24)/60)/60, //real time
-    (1 / 60) / 24, //hr/sec`
-    1 / 60, //day/sec`
-    14 / 60, //fortnite/sec`
-    1 //60 days / sec`
+  
+  simSpeedFactor: number[] = [
+    1/24, //hr/sec
+    1,    //day/sec
+    7,    //wk/sec
+    30,   //mnth/sec
+    60,   //yep
   ];
 
   simDate:Date = new Date();
@@ -73,6 +72,8 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.solSystem.push(new OrbitalGroup("comets", "blue", 3));
     this.solSystem.push(new OrbitalGroup("tno", "silver", 2));
 
+    this.sol = new StellarBody(Sol.star.name, Sol.star.mass, Sol.star.radius);
+
     this.totalBodies = 0;
     for (let g = 0; g < this.solSystem.length; g++) {
       let groupName = this.solSystem[g].name;
@@ -93,7 +94,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           groupData[c].ma,
           groupData[c].i,
           groupData[c].l,
-          null, //parent body null means the star
+          this.sol, //the parent is the Sun
           mass,
           groupData[c].radius
         );
@@ -209,7 +210,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     //scale to view Moons. Change this when config is set up for that.
     if(this.scale > 200 && this.selectedBody) {
       
-      let parentBody = this.selectedBody.parent ? this.selectedBody.parent : this.selectedBody;
+      let parentBody = this.selectedBody.parent.moons ? this.selectedBody.parent : this.selectedBody;
       
       for(let m = 0; m < parentBody.moons.length; m++) {
         let magnitude = point.subtract(parentBody.moons[m].position).magnitudeSq();
@@ -218,6 +219,15 @@ export class AppComponent implements OnInit, AfterViewInit {
           closestMag = magnitude;
           closestPlanet = parentBody.moons[m];
         }
+      }
+    }
+
+    //clicking the star?
+    {
+      let magnitude = point.subtract(this.sol.position).magnitudeSq();
+      if (magnitude < closestMag) {
+        closestMag = magnitude;
+        closestPlanet = this.sol;
       }
     }
 
@@ -339,7 +349,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     dt *= this.simSpeedFactor[this.simSpeed];
     
     let newDate = new Date(
-      this.simDate.getTime() + (dt / this.dayStep) * 24 * 60 * 60
+      this.simDate.getTime() + dt * 24 * 60 * 60
     );
 
   	//change dt to seconds.
