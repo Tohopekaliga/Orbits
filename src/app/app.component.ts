@@ -36,11 +36,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   paused: boolean = true;
   simSpeed: number = 0;
 
-  //base rate of time is approximately 60days/s
+  //base rate of time is 60days/s
   simSpeedFactor:number[] = [
-    1 / 60,
-    1 / 14,
-    1
+    (((1/60)/24)/60)/60, //real time
+    (1 / 60) / 24, //hr/sec`
+    1 / 60, //day/sec`
+    14 / 60, //fortnite/sec`
+    1 //60 days / sec`
   ];
 
   simDate:Date = new Date();
