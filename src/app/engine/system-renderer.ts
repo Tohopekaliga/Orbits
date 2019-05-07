@@ -64,7 +64,7 @@ export class SystemRenderer {
     }
   }
 
-  drawCelestial(body: Orbiter, color:string = "blue", size:number = 4, stroke:string = "navy") {
+  drawCelestial(body: Orbiter, color:string = "blue", size:number = 4, stroke:string = "navy", drawVelocity:boolean = false) {
     this.ctx.beginPath();
     this.ctx.arc(
       this.dimensions.cx + body.position.x * this.scale,
@@ -77,6 +77,17 @@ export class SystemRenderer {
     this.ctx.fill();
     this.ctx.strokeStyle = stroke;
     this.ctx.stroke();
+
+    if (drawVelocity) {
+      this.ctx.beginPath();
+      this.ctx.moveTo(
+        this.dimensions.cx + body.position.x * this.scale,
+        this.dimensions.cy + body.position.y * this.scale);
+      this.ctx.lineTo(
+        this.dimensions.cx + body.position.x * this.scale + body.velocity.x * this.scale,
+        this.dimensions.cy + body.position.y * this.scale + body.velocity.y * this.scale);
+      this.ctx.stroke();
+    }
   }
   
   drawGroup(group:OrbitalGroup) {

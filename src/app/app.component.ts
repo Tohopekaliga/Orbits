@@ -422,7 +422,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     if (this.selectedBody) {
-      this.renderer.drawCelestial(this.selectedBody, "transparent", 6, "white");
+      this.renderer.drawCelestial(this.selectedBody, "transparent", 6, "white", true);
     }
   }
   

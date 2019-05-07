@@ -172,6 +172,7 @@ M: Mean Anomaly
     //r(v) = (a * (1-e^2)) / (1 + e*cos(v))
     let r = (this.a * (1 - this.e * this.e)) / (1 + this.e * cos_v);
 
+    let lastPosition = this.position.subtract(this.parent.position);
 
     this.position.x = r * cos_v;
     this.position.y = r * sin_v;
@@ -179,26 +180,27 @@ M: Mean Anomaly
     //rotate the position to be oriented with the actual orbit
     this.position = this.position.rotate(this.w);
 
-    //now shift it into interplanetary coordinates if applicable
-    if (this.parent) {
-      this.position = this.position.sum(this.parent.position);
-    }
 
 
     //Instantaneous velocity: sqrt(μ*(2/r - 1/a))
     let a = Convert.AUtoKM(this.a) * 1000;
+    r = Convert.AUtoKM(r) * 1000;
     let linearVelocity = Math.sqrt(this.GM * (2 / r - 1 / a));
     linearVelocity = Convert.KMtoAU(linearVelocity / 1000);
 
+    //TODO: Figure out the correct math to compute velocity without lastPosition.
     //tangent vector
     //sqrt(sinv^2 * a^2 + cosv^2 * b^2)
-    let velocity_denominator = Math.sqrt(sin_v* sin_v * a * a + cos_v * cos_v * this.b * this.b);
+    /*let velocity_denominator = Math.sqrt(sin_v* sin_v * this.a * this.a + cos_v * cos_v * this.b * this.b);
     
-    this.velocity.x = -(sin_v * this.a) / velocity_denominator;
-    this.velocity.y = (cos_v * this.b) / velocity_denominator;
+    let tangent = new Vector2(-(sin_v * this.a) / velocity_denominator, (cos_v * this.b) / velocity_denominator);
+    tangent = tangent.sum(this.position);
 
-    this.velocity = this.velocity.normalized().multiply(linearVelocity);
+    this.velocity = tangent.normalized().multiply(linearVelocity);*/
+    this.velocity = this.position.subtract(lastPosition).normalized().multiply(linearVelocity);
 
+    //now shift it into interplanetary coordinates if applicable
+    this.position = this.position.sum(this.parent.position);
   }
 
   //use the orbital elements to compute mean rate & the ellipse drawing parameters
