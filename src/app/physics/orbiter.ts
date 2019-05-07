@@ -40,6 +40,8 @@ M: Mean Anomaly
   //the body this Orbiter Orbits.
   parent: PointMass;
 
+  name: string;
+
   //computed rate of change for Mean Anomaly (M)
   protected meanMotion: number = 0;
 
@@ -50,7 +52,7 @@ M: Mean Anomaly
     ry: 0
   };
 
-  constructor(e:number = 0, a:number = 0, w:number = 0, M:number = 0, i:number = 0, l:number = 0, parent:PointMass = null, mass:number = 0, radius:number = 0) {
+  constructor(name:string = "", e:number = 0, a:number = 0, w:number = 0, M:number = 0, i:number = 0, l:number = 0, parent:PointMass = null, mass:number = 0, radius:number = 0) {
     this.e = e;
     this.a = a;
 
@@ -71,6 +73,7 @@ M: Mean Anomaly
     this.radius = radius;
 
     this.parent = parent;
+    this.name = name;
 
     this.velocity = new Vector2();
     this.position = new Vector2();

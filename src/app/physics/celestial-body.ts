@@ -2,16 +2,14 @@ import { Orbiter } from "./orbiter";
 import { PointMass } from "./point-mass";
 
 export class CelestialBody extends Orbiter {
-  name: string = "";
 
   moons: CelestialBody[];
 
   constructor(name: string, e: number = 0, a: number = 0, w: number = 0, M: number = 0,
     i: number = 0, l: number = 0, parent: PointMass = null, mass: number = 0, radius: number = 0) {
 
-    super(e, a, w, M, i, l, parent, mass, radius);
-
-    this.name = name;
+    super(name, e, a, w, M, i, l, parent, mass, radius);
+ 
     this.moons = [];
 
   }

@@ -1,0 +1,36 @@
+#searchbox {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  overflow: hidden;
+  min-width: 1.5em;
+  width: 0%;
+  height: 1.5em;
+  transition: width 0.3s;
+}
+
+#searchbox.open {
+  width: 15em;
+}
+
+#searchText {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  margin-left: 2em;
+  visibility: hidden;
+  background: rgba(0, 0, 0,0.5);
+  color: white;
+}
+
+#searchbox.open #searchText {
+  visibility:visible;
+}
+
+#searchIcon {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 2;
+}

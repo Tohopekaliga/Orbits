@@ -1,0 +1,7 @@
+<div id="searchbox" [class.open]="searching">
+  <div id="searchResults">
+
+  </div>
+  <input #searchText (keyup)="onKey(searchText.value)" (blur)="onBlur()" class="textInput" id="searchText" type="search" value="" placeholder="Search system objects..." />
+  <div id="searchIcon" (tap)="toggleSearch()">🔍</div>
+</div>

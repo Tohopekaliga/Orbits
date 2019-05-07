@@ -1,5 +1,6 @@
 import { Component, ViewChild, ElementRef, OnInit, AfterViewInit } from "@angular/core";
 import { HostListener } from "@angular/core";
+import { PointMass } from "./physics/point-mass";
 import { StellarBody } from "./physics/stellar-body";
 import { CelestialBody } from "./physics/celestial-body";
 import { OrbitalGroup } from "./physics/orbital-group";
@@ -63,7 +64,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   fps: number;
 
   selectedBody = null;
-  totalBodies: number;
+
+  systemBodyList: PointMass[] = [];
+  searchResults: [];
 
   constructor() {
     this.solSystem = [];
@@ -74,11 +77,12 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.sol = new StellarBody(Sol.star.name, Sol.star.mass, Sol.star.radius);
 
-    this.totalBodies = 0;
+    this.systemBodyList.push(this.sol);
+    
     for (let g = 0; g < this.solSystem.length; g++) {
       let groupName = this.solSystem[g].name;
 	  
-	  let groupData = Sol[groupName];
+	    let groupData = Sol[groupName];
 
 
       for (let c = 0; c < groupData.length; c++) {
@@ -113,16 +117,17 @@ export class AppComponent implements OnInit, AfterViewInit {
               moon.mass ? moon.mass : 0
             );
 
+            this.systemBodyList.push(body);
             body.addMoon(moonEntity);
 
             moonEntity.setMeanMotion(moon.n);
           }
         }
 
+        this.systemBodyList.push(body);
         this.solSystem[g].addEntity(body);
       }
-
-      this.totalBodies += groupData.length;
+      
     }
   }
 
@@ -306,6 +311,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     } else if (this.scale < this.minScale) {
       this.scale = this.minScale;
     }
+  }
+
+  onSearch(searchString) {
+    
   }
 
   select(planet) {

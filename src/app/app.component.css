@@ -30,3 +30,8 @@
   overflow:visible;
   border-bottom: 1px solid white;
 }
+
+#planetSearch {
+  bottom: 0;
+  right: 0;
+}

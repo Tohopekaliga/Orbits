@@ -6,4 +6,6 @@ export interface PointMass {
   velocity: Vector2;
   mass: number;
   radius: number;
+
+  name: string;
 }
