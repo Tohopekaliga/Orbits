@@ -162,13 +162,16 @@ M: Mean Anomaly
 
     //True anomaly: Where the body really is
     this.v = this.trueAnomaly();
+    let cos_v = Math.cos(this.v);
+    let sin_v = Math.sin(this.v);
 
     //r: magnitude of x,y vector to body
     //r(v) = (a * (1-e^2)) / (1 + e*cos(v))
-    let r = (this.a * (1 - this.e * this.e)) / (1 + this.e * Math.cos(this.v));
+    let r = (this.a * (1 - this.e * this.e)) / (1 + this.e * cos_v);
 
-    this.position.x = r * Math.cos(this.v);
-    this.position.y = r * Math.sin(this.v);
+
+    this.position.x = r * cos_v;
+    this.position.y = r * sin_v;
 
     //rotate the position to be oriented with the actual orbit
     this.position = this.position.rotate(this.w);
@@ -181,13 +184,17 @@ M: Mean Anomaly
 
     //Instantaneous velocity: sqrt(μ*(2/r - 1/a))
     let a = Convert.AUtoKM(this.a) * 1000;
-    let v = Math.sqrt(this.GM * (2 / r - 1 / a));
+    let linearVelocity = Math.sqrt(this.GM * (2 / r - 1 / a));
+    linearVelocity = Convert.KMtoAU(linearVelocity / 1000);
 
-    //TODO
     //tangent vector
-    //this will need gravity applied to it for proper motion,
-    //but base Orbiter does not use this for position calculation
+    //sqrt(sinv^2 * a^2 + cosv^2 * b^2)
+    let velocity_denominator = Math.sqrt(sin_v* sin_v * a * a + cos_v * cos_v * this.b * this.b);
     
+    this.velocity.x = -(sin_v * this.a) / velocity_denominator;
+    this.velocity.y = (cos_v * this.b) / velocity_denominator;
+
+    this.velocity = this.velocity.normalized().multiply(linearVelocity);
 
   }
 
