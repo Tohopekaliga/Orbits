@@ -25,7 +25,7 @@
   <div id="planetInfo" class="info" *ngIf="selectedBody">
     Body: <span>{{selectedBody.name}}</span>
   </div>
-  <expanding-search-box class="info" id="planetSearch" #planetSearch [searchResults]="searchResults" (onSearch)="onSearch($event)"></expanding-search-box>
+  <expanding-search-box class="info" id="planetSearch" #planetSearch [searchResults]="searchResults" (onSearch)="onSearch($event)" (selected)="select($event)"></expanding-search-box>
   <canvas
     (tap)="onFieldClick($event)"
     id="systemCanvas"

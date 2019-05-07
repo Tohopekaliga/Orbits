@@ -64,7 +64,7 @@ export class SystemRenderer {
     }
   }
 
-  drawCelestial(body: Orbiter, color:string = "blue", size:number = 4) {
+  drawCelestial(body: Orbiter, color:string = "blue", size:number = 4, stroke:string = "navy") {
     this.ctx.beginPath();
     this.ctx.arc(
       this.dimensions.cx + body.position.x * this.scale,
@@ -75,7 +75,7 @@ export class SystemRenderer {
     );
     this.ctx.fillStyle = color;
     this.ctx.fill();
-    this.ctx.strokeStyle = "navy";
+    this.ctx.strokeStyle = stroke;
     this.ctx.stroke();
   }
   

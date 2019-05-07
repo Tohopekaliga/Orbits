@@ -66,7 +66,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   selectedBody = null;
 
   systemBodyList: PointMass[] = [];
-  searchResults: [];
+  searchResults:PointMass[] = [];
 
   constructor() {
     this.solSystem = [];
@@ -129,6 +129,9 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
       
     }
+
+    //sort the body list to help with search.
+    this.systemBodyList.sort((a: PointMass, b: PointMass) => { return a.name < b.name ? -1 : 1;});
   }
 
   ngOnInit() {
@@ -251,16 +254,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    this.selectedBody = closestPlanet;
+    this.select(closestPlanet);
 
-    if (this.selectedBody) {
-      //reset camera to center: It will be centered on the selected body.
-      this.center = this.area.divide(2);
-    }
-
-    if (this.paused) {
-      this.render();
-    }
 
   }
 
@@ -314,11 +309,25 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   onSearch(searchString) {
+
+    if (searchString.length > 2)
+      this.searchResults = this.systemBodyList.filter((body) => { return body.name.includes(searchString); })
+    else
+      this.searchResults = [];
     
   }
 
   select(planet) {
     this.selectedBody = planet;
+
+    if (this.selectedBody) {
+      //reset camera to center: It will be centered on the selected body.
+      this.center = this.area.divide(2);
+    }
+
+    if (this.paused) {
+      this.render();
+    }
   }
   
   advance(days:number) {
@@ -410,6 +419,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     for (let group of this.solSystem) {
       this.renderer.drawGroup(group);
+    }
+
+    if (this.selectedBody) {
+      this.renderer.drawCelestial(this.selectedBody, "transparent", 6, "white");
     }
   }
   

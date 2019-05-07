@@ -5,8 +5,8 @@
   overflow: hidden;
   min-width: 1.5em;
   width: 0%;
-  height: 1.5em;
   transition: width 0.3s;
+  min-height: 1.5em;
 }
 
 #searchbox.open {
@@ -33,4 +33,11 @@
   bottom: 0;
   right: 0;
   z-index: 2;
+}
+
+#searchResults {
+  position: relative;
+  float: right;
+  padding-bottom: 1.5em;
+  max-height: 6em;
 }

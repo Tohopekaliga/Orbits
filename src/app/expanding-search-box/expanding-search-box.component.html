@@ -1,6 +1,8 @@
 <div id="searchbox" [class.open]="searching">
-  <div id="searchResults">
-
+  <div id="searchResults" *ngIf="searching">
+    <div *ngFor="let result of searchResults" (tap)="onSelect(result)">
+      {{result.name}}
+    </div>
   </div>
   <input #searchText (keyup)="onKey(searchText.value)" (blur)="onBlur()" class="textInput" id="searchText" type="search" value="" placeholder="Search system objects..." />
   <div id="searchIcon" (tap)="toggleSearch()">🔍</div>

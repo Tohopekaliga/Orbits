@@ -11,11 +11,13 @@ export class ExpandingSearchBoxComponent {
 
   @Input() searchResults;
   @Output() onSearch: EventEmitter<string> = new EventEmitter();
+  @Output() selected: EventEmitter<any> = new EventEmitter();
 
   constructor() { }
 
   toggleSearch() {
     this.searching = !this.searching;
+   
   }
 
   onKey(data:string) {
@@ -23,6 +25,11 @@ export class ExpandingSearchBoxComponent {
   }
 
   onBlur() {
+    //this.searching = false;
+  }
+
+  onSelect(item) {
+    this.selected.emit(item);
     this.searching = false;
   }
 
