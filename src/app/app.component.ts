@@ -117,7 +117,7 @@ export class AppComponent implements OnInit, AfterViewInit {
               moon.mass ? moon.mass : 0
             );
 
-            this.systemBodyList.push(body);
+            this.systemBodyList.push(moonEntity);
             body.addMoon(moonEntity);
 
             moonEntity.setMeanMotion(moon.n);
