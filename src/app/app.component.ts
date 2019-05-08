@@ -168,40 +168,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.simSpeed = speed;
   }
 
-  toggle(group) {
-    group.updating = !group.updating;
-  }
-
-  onPinchStart(event) {
-    this.pinchScale = this.scale;
-    this.pinching = true;
-    
-    if(!this.selectedBody) {
-      this.onPanStart(event);
-    }
-  }
-
-  onPinchEnd(event) {
-    this.pinching = false;
-  }
-
-  onPinch(event) {
-    if (this.pinching) {
-      this.scale = this.pinchScale * event.scale;
-
-      this.clampScale();
-      
-      //if a body is selected, don't pan,
-      //otherwise do so.
-      if(!this.selectedBody) {
-        this.onPan(event);
-      }
-    }
-
-    if (this.paused)
-      this.render();
-  }
-
   onFieldClick(event) {
     //convert the click location to simulation coordinates
     let point = new Vector2(event.center.x - this.center.x, event.center.y - this.center.y).divide(this.scale);
@@ -258,13 +224,36 @@ export class AppComponent implements OnInit, AfterViewInit {
 
 
   }
-
-  deselectBody() {
-    if (this.selectedBody) {
-      //force the center point to stay where it is.
-      this.center = this.area.divide(2).subtract(this.selectedBody.position.multiply(this.scale));
-      this.selectedBody = null;
+  
+  
+  onPinchStart(event) {
+    this.pinchScale = this.scale;
+    this.pinching = true;
+    
+    if(!this.selectedBody) {
+      this.onPanStart(event);
     }
+  }
+
+  onPinchEnd(event) {
+    this.pinching = false;
+  }
+
+  onPinch(event) {
+    if (this.pinching) {
+      this.scale = this.pinchScale * event.scale;
+
+      this.clampScale();
+      
+      //if a body is selected, don't pan,
+      //otherwise do so.
+      if(!this.selectedBody) {
+        this.onPan(event);
+      }
+    }
+
+    if (this.paused)
+      this.render();
   }
 
   onScroll(event) {
@@ -327,6 +316,14 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     if (this.paused) {
       this.render();
+    }
+  }
+  
+  deselectBody() {
+    if (this.selectedBody) {
+      //force the center point to stay where it is.
+      this.center = this.area.divide(2).subtract(this.selectedBody.position.multiply(this.scale));
+      this.selectedBody = null;
     }
   }
   
