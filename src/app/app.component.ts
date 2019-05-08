@@ -7,6 +7,7 @@ import { OrbitalGroup } from "./physics/orbital-group";
 import { SystemRenderer } from "./engine/system-renderer";
 import Sol from "../assets/sol.json";
 import { Vector2, Convert } from './physics/math3d';
+import { Vessel } from './physics/vessel';
 
 var mainComponent;
 
@@ -33,6 +34,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   solSystem: OrbitalGroup[] = null;
   sol: StellarBody;
+  ships: Vessel[];
 
   paused: boolean = true;
   simSpeed: number = 0;
@@ -76,6 +78,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.solSystem.push(new OrbitalGroup("tno", "silver", 2));
 
     this.sol = new StellarBody(Sol.star.name, Sol.star.mass, Sol.star.radius);
+    this.ships = [];
 
     this.systemBodyList.push(this.sol);
     
@@ -129,6 +132,11 @@ export class AppComponent implements OnInit, AfterViewInit {
       }
       
     }
+
+    var vessel = new Vessel("Orbital 1", 0.01671123, 1.00000261, 102.93768193, 0, 0, 0, this.sol, 0, 0);
+    this.ships.push(vessel)
+    this.systemBodyList.push(vessel);
+    console.log(this.ships);
 
     //sort the body list to help with search.
     this.systemBodyList.sort((a: PointMass, b: PointMass) => { return a.name < b.name ? -1 : 1;});
@@ -314,6 +322,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.center = this.area.divide(2);
     }
 
+    this.ships[0].targetBody = planet;
+
     if (this.paused) {
       this.render();
     }
@@ -324,6 +334,8 @@ export class AppComponent implements OnInit, AfterViewInit {
       //force the center point to stay where it is.
       this.center = this.area.divide(2).subtract(this.selectedBody.position.multiply(this.scale));
       this.selectedBody = null;
+
+      this.ships[0].targetBody = null;
     }
   }
   
@@ -394,6 +406,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     for (let group of this.solSystem) {
       group.update(dt);
     }
+
+    for (let ship of this.ships) {
+      ship.update(dt);
+    }
   }
 
   render() {
@@ -420,6 +436,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     if (this.selectedBody) {
       this.renderer.drawCelestial(this.selectedBody, "transparent", 6, "white", true);
+    }
+
+    for (let ship of this.ships) {
+      this.renderer.drawCelestial(ship, "white", 3, "red", true);
     }
   }
   
