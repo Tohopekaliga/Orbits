@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
-  selector: 'sim-speed-bar',
+  selector: 'orb-sim-speed-bar',
   templateUrl: './sim-speed-bar.component.html',
   styleUrls: ['./sim-speed-bar.component.css']
 })

@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
-  selector: 'expanding-search-box',
+  selector: 'orb-expanding-search-box',
   templateUrl: './expanding-search-box.component.html',
   styleUrls: ['./expanding-search-box.component.css']
 })
