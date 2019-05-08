@@ -5,12 +5,14 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { SimSpeedBarComponent } from './sim-speed-bar/sim-speed-bar.component';
 import { ExpandingSearchBoxComponent } from './expanding-search-box/expanding-search-box.component';
+import { ScaleIndicatorComponent } from './scale-indicator/scale-indicator.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     SimSpeedBarComponent,
-    ExpandingSearchBoxComponent
+    ExpandingSearchBoxComponent,
+    ScaleIndicatorComponent
   ],
   imports: [
     BrowserModule//,
