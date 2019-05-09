@@ -38,6 +38,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   paused: boolean = true;
   simSpeed: number = 0;
+  frameId: number = 0;
   
   simSpeedFactor: number[] = [
     1/24, //hr/sec
@@ -151,7 +152,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     var ctx = this.canvasRef.nativeElement.getContext("2d");
     this.renderer = new SystemRenderer(ctx);
 
-    this.render();
+    this.doSingleRender();
   }
 
   resume() {
@@ -261,7 +262,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     if (this.paused)
-      this.render();
+      this.doSingleRender();
   }
 
   onScroll(event) {
@@ -276,7 +277,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.clampScale();
 
     if (this.paused)
-      this.render();
+      this.doSingleRender();
   }
 
   onPanStart(event) {
@@ -294,7 +295,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
     
     if (this.paused)
-      this.render();
+      this.doSingleRender();
   }
 
   protected clampScale() {
@@ -325,7 +326,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.ships[0].targetBody = planet;
 
     if (this.paused) {
-      this.render();
+      this.doSingleRender();
     }
   }
   
@@ -412,6 +413,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
   }
 
+  doSingleRender() {
+    if (!this.frameId) {
+      this.frameId = requestAnimationFrame(renderOnce);
+    }
+  }
+
   render() {
 
     let center = this.center;
@@ -451,8 +458,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.area.x = window.innerWidth;
     this.area.y = window.innerHeight;
     
-    this.render();
+    this.doSingleRender();
   }
+}
+
+function renderOnce() {
+  mainComponent.frameId = 0;
+  mainComponent.render();
 }
 
 function mainLoop() {
