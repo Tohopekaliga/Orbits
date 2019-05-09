@@ -67,6 +67,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   fps: number;
 
   selectedBody = null;
+  earth = null;
 
   systemBodyList: PointMass[] = [];
   searchResults:PointMass[] = [];
@@ -126,6 +127,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
             moonEntity.setMeanMotion(moon.n);
           }
+
+          if (body.name == "Earth")
+            this.earth = body;
         }
 
         this.systemBodyList.push(body);
@@ -137,7 +141,6 @@ export class AppComponent implements OnInit, AfterViewInit {
     var vessel = new Vessel("Orbital 1", 0.01671123, Convert.AUtoKM(1.00000261) * 1000, 102.93768193, 0, 0, 0, this.sol, 0, 0);
     this.ships.push(vessel)
     this.systemBodyList.push(vessel);
-    console.log(this.ships);
 
     //sort the body list to help with search.
     this.systemBodyList.sort((a: PointMass, b: PointMass) => { return a.name < b.name ? -1 : 1;});
@@ -178,17 +181,17 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   onFieldClick(event) {
-    //convert the click location to simulation coordinates
-    let point = new Vector2(event.center.x - this.center.x, event.center.y - this.center.y).divide(this.scale);
+    //convert the click location to simulation coordinates.
+    let point = new Vector2(event.center.x - this.center.x, event.center.y - this.center.y).multiply(Convert.km_au * 1000 / this.scale);
     
     //account for current body focus
     if(this.selectedBody) {
       point = point.sum(this.selectedBody.position);
     }
 
-    //minimum click distance is based on scale.
+    //minimum click distance is roughly 10px
     let closestPlanet = null;
-    let closestMag = 10 / this.scale;
+    let closestMag = Math.pow(Convert.AUtoKM(10 / this.scale) * 1000, 2);
     
     //scale to view Moons. Change this when config is set up for that.
     if(this.scale > 200 && this.selectedBody) {
@@ -424,7 +427,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     let center = this.center;
 
     if (this.selectedBody)
-      center = center.subtract(this.selectedBody.position.multiply(this.scale));
+      center = center.subtract(this.selectedBody.position.multiply(this.scale / (1000 * Convert.km_au)));
 
     this.renderer.setDimensions(
       center.x,
