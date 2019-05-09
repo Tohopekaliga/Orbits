@@ -97,7 +97,7 @@ export class AppComponent implements OnInit, AfterViewInit {
         var body = new CelestialBody(
           groupData[c].name ? groupData[c].name : groupData[c].full_name, //some TNOs don't have proper names, but do have designators in the full name.
           groupData[c].e,
-          groupData[c].a,
+          Convert.AUtoKM(groupData[c].a) * 1000,
           groupData[c].w,
           groupData[c].ma,
           groupData[c].i,
@@ -112,7 +112,7 @@ export class AppComponent implements OnInit, AfterViewInit {
             let moonEntity = new CelestialBody(
               moon.name,
               moon.e,
-              Convert.KMtoAU(moon.a), //JPL reports these as km, but we're operating on AU
+              moon.a * 1000, //JPL reports these as km rather than AU
               moon.w,
               moon.ma,
               moon.i,
@@ -134,7 +134,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       
     }
 
-    var vessel = new Vessel("Orbital 1", 0.01671123, 1.00000261, 102.93768193, 0, 0, 0, this.sol, 0, 0);
+    var vessel = new Vessel("Orbital 1", 0.01671123, Convert.AUtoKM(1.00000261) * 1000, 102.93768193, 0, 0, 0, this.sol, 0, 0);
     this.ships.push(vessel)
     this.systemBodyList.push(vessel);
     console.log(this.ships);
@@ -431,7 +431,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       center.y,
       this.area.x,
       this.area.y,
-      this.scale
+      Convert.KMtoAU(this.scale / 1000) //scale is effectively "pixels per AU", which is a lot easier to look at for render considerations.
     );
 
     this.renderer.clear();

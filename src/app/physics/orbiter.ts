@@ -148,7 +148,7 @@ M: Mean Anomaly
     //a in meters, M as mass of parent, m as mass of body
     //n = sqrt( G(M+m)/a^3 ), radians/second
 
-    let a = Convert.AUtoKM(this.a) * 1000;
+    let a = this.a;
     let mass = this.parent.mass + this.mass;
     this.GM = Convert.G * mass;
     let a_cubed = a * a * a;
@@ -183,10 +183,8 @@ M: Mean Anomaly
 
 
     //Instantaneous velocity: sqrt(μ*(2/r - 1/a))
-    let a = Convert.AUtoKM(this.a) * 1000;
-    r = Convert.AUtoKM(r) * 1000;
+    let a = this.a;
     let linearVelocity = Math.sqrt(this.GM * (2 / r - 1 / a));
-    linearVelocity = Convert.KMtoAU(linearVelocity / 1000);
 
     //TODO: Figure out the correct math to compute velocity without lastPosition.
     //tangent vector
