@@ -186,6 +186,9 @@ M: Mean Anomaly
     let a = this.a;
     let linearVelocity = Math.sqrt(this.GM * (2 / r - 1 / a));
 
+    //dt is in days, while the equations are in seconds. Convert.
+    linearVelocity *= Convert.seconds_day;
+
     //TODO: Figure out the correct math to compute velocity without lastPosition.
     //tangent vector
     //sqrt(sinv^2 * a^2 + cosv^2 * b^2)

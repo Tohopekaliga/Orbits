@@ -43,31 +43,25 @@ export class Vessel extends Orbiter {
 
       this.gravitationalAcceleration(dt);
       this.velocity = this.velocity.sum(approachVector);
-      //console.log(this.velocity.magnitude());
 
       this.position = this.position.sum(this.velocity.multiply(dt));
-
+      
       this.recalcElements();
     }
   }
 
   //Be affected by gravity of the parent body
   gravitationalAcceleration(dt) {
+    //dt is in days, but gravitation is seconds, and acceleration is seconds^2, so square them.
+    let dtSec = dt * Convert.seconds_day * Convert.seconds_day;
 
     let localPosition = this.position.subtract(this.parent.position);
     let altitudeSq = localPosition.magnitudeSq();
 
-    let gravitation = Convert.G * (this.parent.mass / altitudeSq);
+    let gravitation = -Convert.G * (this.parent.mass / altitudeSq);
 
-    //dt is a Days value, gravitation is a m/ss value.
-    gravitation *= (60 * 60 * 24);
-
-    let gravityMod = localPosition.normalized().multiply(-gravitation * dt);
-
-    let oldVel = new Vector2(this.velocity.x, this.velocity.y);
+    let gravityMod = localPosition.normalized().multiply(gravitation * dtSec);
 
     this.velocity = this.velocity.sum(gravityMod);
-
-    //console.log(oldVel, this.velocity, this.position, gravitation);
   }
 }
