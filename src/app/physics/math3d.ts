@@ -77,6 +77,14 @@ export class Vector2 {
     return Math.sqrt(this.magnitudeSq());
   }
 
+  distanceSq(rh: Vector2) {
+    return this.subtract(rh).magnitudeSq();
+  }
+
+  distance(rh: Vector2) {
+    return Math.sqrt(this.distanceSq(rh));
+  }
+
   normalized() {
     let norm = this.magnitude();
     return this.divide(norm);
