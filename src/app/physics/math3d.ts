@@ -13,6 +13,10 @@ export class Vector {
     this.z = z;
   }
 
+  static clone(vec:Vector) {
+    return new Vector(vec.x, vec.y, vec.z);
+  }
+
   dot(rh: Vector) {
     return this.x * rh.x + this.y * rh.y + this.z * rh.z;
   }
@@ -67,6 +71,10 @@ export class Vector2 {
   constructor(x: number = 0, y: number = 0) {
     this.x = x;
     this.y = y;
+  }
+
+  static clone(vec:Vector2) {
+    return new Vector2(vec.x, vec.y);
   }
 
   magnitudeSq() {

@@ -1,5 +1,6 @@
 import { Orbiter } from "./orbiter";
 import { PointMass } from "./point-mass";
+import { Vector2 } from './math3d';
 
 export class CelestialBody extends Orbiter {
 
@@ -20,7 +21,7 @@ export class CelestialBody extends Orbiter {
     this.moons.push(moon);
   }
 
-  update(dt) {
+  update(dt:number) {
 
     super.update(dt);
 

@@ -92,12 +92,7 @@ M: Mean Anomaly
     }
   }
 
-  setMeanMotion(n:number) {
-    this.n = n;
-    this.calculateOrbit();
-  }
-
-  update(dt) {
+  update(dt:number) {
     this.M += this.meanMotion * dt;
 
     while (this.M > 2 * Math.PI) {
@@ -109,6 +104,22 @@ M: Mean Anomaly
     }
 
     this.calculateVectors();
+  }
+  
+  peekPosition(dt:number) {
+    let realPos = Vector2.clone(this.position);
+    let realVel = Vector2.clone(this.velocity);
+    let realM = this.M;
+
+    this.update(dt);
+
+    let ret = [Vector2.clone(this.position), Vector2.clone(this.velocity)];
+
+    this.position = realPos;
+    this.velocity = realVel;
+    this.M = realM;
+
+    return ret;
   }
 
   protected eccentricAnomaly() {

@@ -8,4 +8,6 @@ export interface PointMass {
   radius: number;
 
   name: string;
+
+  peekPosition(dt:number);
 }

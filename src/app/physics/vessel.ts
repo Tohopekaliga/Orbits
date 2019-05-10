@@ -9,7 +9,7 @@ export class Vessel extends Orbiter {
 
   targetBody: PointMass;
 
-  update(dt) {
+  update(dt:number) {
     if (!this.targetBody || this.targetBody.position == this.position) {
       super.update(dt);
     }
@@ -54,7 +54,7 @@ export class Vessel extends Orbiter {
   }
 
   //Be affected by gravity of the parent body
-  gravitationalAcceleration(dt) {
+  gravitationalAcceleration(dt:number) {
 
     let localPosition = this.position.subtract(this.parent.position);
     let altitudeSq = localPosition.magnitudeSq();

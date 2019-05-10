@@ -22,4 +22,8 @@ export class StellarBody implements PointMass {
 
     this.name = name;
   }
+
+  peekPosition(dt:number) {
+    return [Vector2.clone(this.position), Vector2.clone(this.velocity)];
+  }
 }
