@@ -3,9 +3,9 @@ import { Vector2, Convert } from './math3d';
 import { PointMass } from './point-mass';
 
 export class Vessel extends Orbiter {
-  acceleration:number = 1;
+  acceleration:number = 1; //m/ss
   maxAccel: Vector2;
-  //maxVel: 1; //1 AU/day is roughly 0.005 C
+  maxVel: number = 2e6; //m/s, relative to  target
 
   targetBody: PointMass;
 
@@ -14,34 +14,37 @@ export class Vessel extends Orbiter {
       super.update(dt);
     }
     else {
+
+      //let gravity work its magic.
+      this.gravitationalAcceleration(dt);
+
+
       let approachVector = this.targetBody.position.subtract(this.position);
       let distSq = approachVector.magnitudeSq();
-      let accSq = this.acceleration ** 2;
 
       let relativeVel = this.targetBody.velocity.subtract(this.velocity);
       let rvel = relativeVel.magnitude();
 
-      let acc = this.acceleration;
-      /*
-      if(rvel > Math.sqrt(distSq) * 4) {
-        //cut back on relative velocity
-        this.velocity.sum(relativeVel.normalized().multiply(acc/2));
+      //split acceleration across activities
+      let acc = this.acceleration * dt;
 
-        acc /= 2;
-      }*/
+      if (rvel > this.maxVel * dt) {
 
-      let stepAccel = distSq < acc*acc ? Math.sqrt(distSq) : acc;
-      stepAccel *= dt;
+        let difference = rvel - this.maxVel;
 
-      approachVector = approachVector.normalized().multiply(stepAccel);
+        let adjustment = difference > acc ? acc : difference;
+        acc -= adjustment;
 
+        this.velocity.sum(relativeVel.normalized().multiply(adjustment));
+        
+      }
+      
+      if (acc > 0) {
+        let stepAccel = distSq < acc * acc ? Math.sqrt(distSq) : acc;
 
+        approachVector = approachVector.normalized().multiply(stepAccel);
+      }
 
-      //if (approachVector.magnitudeSq() > this.acceleration * this.acceleration * dt * dt) {
-      //  approachVector = approachVector.normalized().multiply(this.acceleration * dt);
-      //}
-
-      this.gravitationalAcceleration(dt);
       this.velocity = this.velocity.sum(approachVector);
 
       this.position = this.position.sum(this.velocity.multiply(dt));
