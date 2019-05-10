@@ -8,7 +8,7 @@ import { Component, Input } from '@angular/core';
 export class ScaleIndicatorComponent {
 
   protected trueScale;
-  protected displayScale;
+  displayScale;
 
   @Input()
   set scale(scale: number) {
