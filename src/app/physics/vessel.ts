@@ -18,10 +18,24 @@ export class Vessel extends Orbiter {
       let distSq = approachVector.magnitudeSq();
       let accSq = this.acceleration ** 2;
 
-      let stepAccel = distSq < accSq ? Math.sqrt(distSq) : this.acceleration;
+      let relativeVel = this.targetBody.velocity.subtract(this.velocity);
+      let rvel = relativeVel.magnitude();
+
+      let acc = this.acceleration;
+      /*
+      if(rvel > Math.sqrt(distSq) * 4) {
+        //cut back on relative velocity
+        this.velocity.sum(relativeVel.normalized().multiply(acc/2));
+
+        acc /= 2;
+      }*/
+
+      let stepAccel = distSq < acc*acc ? Math.sqrt(distSq) : acc;
       stepAccel *= dt;
 
       approachVector = approachVector.normalized().multiply(stepAccel);
+
+
 
       //if (approachVector.magnitudeSq() > this.acceleration * this.acceleration * dt * dt) {
       //  approachVector = approachVector.normalized().multiply(this.acceleration * dt);
