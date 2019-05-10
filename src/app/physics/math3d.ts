@@ -136,6 +136,10 @@ export class Convert {
   //seconds per day
   static seconds_day: number = 60 * 60 * 24;
 
+  static DaystoSec(d: number) {
+    return d * Convert.seconds_day;
+  }
+
   //Universal Gravitation Constant
   static G: number = 6.67408e-11;
 

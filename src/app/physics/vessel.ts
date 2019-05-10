@@ -3,9 +3,9 @@ import { Vector2, Convert } from './math3d';
 import { PointMass } from './point-mass';
 
 export class Vessel extends Orbiter {
-  acceleration:number = 1000000000;
+  acceleration:number = 1;
   maxAccel: Vector2;
-  maxVel: 1; //1 AU/day is roughly 0.005 C
+  //maxVel: 1; //1 AU/day is roughly 0.005 C
 
   targetBody: PointMass;
 
@@ -52,15 +52,13 @@ export class Vessel extends Orbiter {
 
   //Be affected by gravity of the parent body
   gravitationalAcceleration(dt) {
-    //dt is in days, but gravitation is seconds, and acceleration is seconds^2, so square them.
-    let dtSec = dt * Convert.seconds_day * Convert.seconds_day;
 
     let localPosition = this.position.subtract(this.parent.position);
     let altitudeSq = localPosition.magnitudeSq();
 
     let gravitation = -Convert.G * (this.parent.mass / altitudeSq);
 
-    let gravityMod = localPosition.normalized().multiply(gravitation * dtSec);
+    let gravityMod = localPosition.normalized().multiply(gravitation * dt);
 
     this.velocity = this.velocity.sum(gravityMod);
   }

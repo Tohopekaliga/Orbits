@@ -41,11 +41,12 @@ export class AppComponent implements OnInit, AfterViewInit {
   frameId: number = 0;
   
   simSpeedFactor: number[] = [
-    1/24, //hr/sec
-    1,    //day/sec
-    7,    //wk/sec
-    30,   //mnth/sec
-    60,   //yep
+    1, //real time
+    60 * 60, //hr/sec
+    Convert.DaystoSec(1),    //day/sec
+    Convert.DaystoSec(7),    //wk/sec
+    Convert.DaystoSec(30),   //mnth/sec
+    Convert.DaystoSec(60),   //yep
   ];
 
   simDate:Date = new Date();
@@ -379,9 +380,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     
     dt *= this.simSpeedFactor[this.simSpeed];
     
-    let newDate = new Date(
-      this.simDate.getTime() + dt * 24 * 60 * 60
-    );
+    let newDate = new Date(this.simDate.getTime() + dt);
 
   	//change dt to seconds.
     dt = dt / 1000;

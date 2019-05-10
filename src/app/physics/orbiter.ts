@@ -153,8 +153,8 @@ M: Mean Anomaly
     this.GM = Convert.G * mass;
     let a_cubed = a * a * a;
 
-    //Mean Motion in days
-    this.meanMotion = Math.sqrt(this.GM / a_cubed) * 60 * 60 * 24;
+    //Mean Motion, the total angular change per second for this orbit
+    this.meanMotion = Math.sqrt(this.GM / a_cubed);
 
     //flip rotation direction to account for inverted Y axis.
     if (this.i < Math.PI / 2)
@@ -185,9 +185,6 @@ M: Mean Anomaly
     //Instantaneous velocity: sqrt(μ*(2/r - 1/a))
     let a = this.a;
     let linearVelocity = Math.sqrt(this.GM * (2 / r - 1 / a));
-
-    //dt is in days, while the equations are in seconds. Convert.
-    linearVelocity *= Convert.seconds_day;
 
     //TODO: Figure out the correct math to compute velocity without lastPosition.
     //tangent vector
