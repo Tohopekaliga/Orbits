@@ -1,10 +1,9 @@
 import { Component, ViewChild, ElementRef, OnInit, AfterViewInit } from "@angular/core";
 import { HostListener } from "@angular/core";
 import { PointMass } from "../engine/physics/point-mass";
-import { StellarBody } from "../engine/physics/stellar-body";
-import { CelestialBody } from "../engine/physics/celestial-body";
-import { OrbitalGroup } from "../engine/physics/orbital-group";
+import { StarSystem } from "../engine/star-system";
 import { SystemRenderer } from "../engine/render/system-renderer";
+import { SystemGenerator } from "../engine/system-generator";
 import Sol from "../assets/sol.json";
 import { Vector2, Convert } from '../engine/physics/math3d';
 import { Vessel } from '../engine/physics/vessel';
@@ -32,9 +31,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild("systemCanvas") canvasRef: ElementRef;
   renderer: SystemRenderer = null;
 
-  solSystem: OrbitalGroup[] = null;
-  sol: StellarBody;
-  ships: Vessel[];
+  solSystem: StarSystem = null;
+
 
   paused: boolean = true;
   simSpeed: number = 0;
@@ -73,73 +71,18 @@ export class AppComponent implements OnInit, AfterViewInit {
   searchResults:PointMass[] = [];
 
   constructor() {
-    this.solSystem = [];
-    this.solSystem.push(new OrbitalGroup("planets", "green", 4, true));
-    this.solSystem.push(new OrbitalGroup("mainBelt", "grey", 3));
-    this.solSystem.push(new OrbitalGroup("comets", "blue", 3));
-    this.solSystem.push(new OrbitalGroup("tno", "silver", 2));
-
-    this.sol = new StellarBody(Sol.star.name, Sol.star.mass, Sol.star.radius);
-    this.ships = [];
-
-    this.systemBodyList.push(this.sol);
     
-    for (let g = 0; g < this.solSystem.length; g++) {
-      let groupName = this.solSystem[g].name;
-	  
-	    let groupData = Sol[groupName];
+    this.solSystem = SystemGenerator.loadFromJson(Sol);
 
 
-      for (let c = 0; c < groupData.length; c++) {
+    var vessel = new Vessel(
+      "Orbital 1",
+       0.01671123,
+        Convert.AUtoKM(1.00000261) * 1000,
+         102.93768193, 0, 0, 0, this.solSystem.star, 0, 0);
+    this.solSystem.addShip(vessel);
 
-        //JPL data defines mass as x * 10e24 kg, and only provides GM (mass * g) for most bodies.
-        let mass = groupData[c].mass ? groupData[c].mass * 1e24 : groupData[c].GM / Convert.G;
 
-        var body = new CelestialBody(
-          groupData[c].name ? groupData[c].name : groupData[c].full_name, //some TNOs don't have proper names, but do have designators in the full name.
-          groupData[c].e,
-          Convert.AUtoKM(groupData[c].a) * 1000,
-          groupData[c].w,
-          groupData[c].ma,
-          groupData[c].i,
-          groupData[c].l,
-          this.sol, //the parent is the Sun
-          mass,
-          groupData[c].radius
-        );
-
-        if (groupData[c].satellites != null) {
-          for (let moon of groupData[c].satellites) {
-            let moonEntity = new CelestialBody(
-              moon.name,
-              moon.e,
-              moon.a * 1000, //JPL reports these as km rather than AU
-              moon.w,
-              moon.ma,
-              moon.i,
-              moon.l,
-              body,
-              moon.mass ? moon.mass : 0
-            );
-
-            this.systemBodyList.push(moonEntity);
-            body.addMoon(moonEntity);
-          }
-
-        }
-
-        this.systemBodyList.push(body);
-        this.solSystem[g].addEntity(body);
-      }
-      
-    }
-
-    var vessel = new Vessel("Orbital 1", 0.01671123, Convert.AUtoKM(1.00000261) * 1000, 102.93768193, 0, 0, 0, this.sol, 0, 0);
-    this.ships.push(vessel)
-    this.systemBodyList.push(vessel);
-
-    //sort the body list to help with search.
-    this.systemBodyList.sort((a: PointMass, b: PointMass) => { return a.name < b.name ? -1 : 1;});
   }
 
   ngOnInit() {
@@ -180,59 +123,23 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   onFieldClick(event) {
     //convert the click location to simulation coordinates.
-    let point = new Vector2(event.center.x - this.center.x, event.center.y - this.center.y).multiply(Convert.km_au * 1000 / this.scale);
+    let point = new Vector2(event.center.x - this.center.x, event.center.y - this.center.y)
+    point = point.multiply(Convert.km_au * 1000 / this.scale);
     
     //account for current body focus
     if(this.selectedBody) {
       point = point.sum(this.selectedBody.position);
     }
 
-    //minimum click distance is roughly 10px
-    let closestPlanet = null;
-    let closestMag = Math.pow(Convert.AUtoKM(10 / this.scale) * 1000, 2);
-    
-    //scale to view Moons. Change this when config is set up for that.
-    if(this.scale > 200 && this.selectedBody) {
-      
-      let parentBody = this.selectedBody.parent.moons ? this.selectedBody.parent : this.selectedBody;
-      
-      for(let m = 0; m < parentBody.moons.length; m++) {
-        let magnitude = point.subtract(parentBody.moons[m].position).magnitudeSq();
+    let leeway = Math.pow(Convert.AUtoKM(10 / this.scale) * 1000, 2);
 
-        if (magnitude < closestMag) {
-          closestMag = magnitude;
-          closestPlanet = parentBody.moons[m];
-        }
-      }
-    }
+    let pick = this.solSystem.pickObject(point, leeway, this.selectedBody, true);
 
-    //clicking the star?
-    {
-      let magnitude = point.subtract(this.sol.position).magnitudeSq();
-      if (magnitude < closestMag) {
-        closestMag = magnitude;
-        closestPlanet = this.sol;
-      }
-    }
-
-    for (let b = 0; b < this.solSystem.length; b++) {
-      for (let c = 0; c < this.solSystem[b].entityList.length; c++) {
-        let magnitude = point.subtract(this.solSystem[b].entityList[c].position).magnitudeSq();
-
-        if (magnitude < closestMag) {
-          closestMag = magnitude;
-          closestPlanet = this.solSystem[b].entityList[c];
-        }
-      }
-    }
-
-    if (!closestPlanet && event.tapCount == 1) {
+    if (!pick && event.tapCount == 1) {
       return;
     }
 
-    this.select(closestPlanet);
-
-
+    this.select(pick);
   }
   
   
@@ -324,7 +231,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.center = this.area.divide(2);
     }
 
-    this.ships[0].goToBody(planet);
+    this.solSystem.ships[0].goToBody(planet);
 
     if (this.paused) {
       this.doSingleRender();
@@ -337,7 +244,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.center = this.area.divide(2).subtract(this.selectedBody.position.multiply(this.scale));
       this.selectedBody = null;
 
-      this.ships[0].targetBody = null;
+      this.solSystem.ships[0].targetBody = null;
     }
   }
   
@@ -403,13 +310,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   
   protected updateSystem(dt) {
 
-    for (let group of this.solSystem) {
-      group.update(dt);
-    }
-
-    for (let ship of this.ships) {
-      ship.update(dt);
-    }
+    this.solSystem.update(dt);
   }
 
   doSingleRender() {
@@ -436,7 +337,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.renderer.clear();
     this.renderer.drawStar();
 
-    for (let group of this.solSystem) {
+    for (let group of this.solSystem.bodies) {
       this.renderer.drawGroup(group);
     }
 
@@ -444,7 +345,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.renderer.drawCelestial(this.selectedBody, "transparent", 6, "white", true);
     }
 
-    for (let ship of this.ships) {
+    for (let ship of this.solSystem.ships) {
       this.renderer.drawShip(ship);
     }
   }
