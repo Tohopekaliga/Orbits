@@ -14,6 +14,8 @@ export class SystemRenderer {
   };
 
   scale: number;
+  orbitMax: number;
+  moonsMax: number;
 
   constructor(ctx: CanvasRenderingContext2D) {
     this.ctx = ctx;;
@@ -31,6 +33,14 @@ export class SystemRenderer {
     this.dimensions.width = width;
     this.dimensions.height = height;
     this.scale = scale;
+  }
+
+  setOrbitMaximum(max:number) {
+    this.orbitMax = max;
+  }
+
+  setMoonsMaximum(max:number) {
+    this.moonsMax = max;
   }
 
   clear() {
@@ -56,7 +66,7 @@ export class SystemRenderer {
   drawBodyWithMoons(body: CelestialBody, color: string = "blue", size: number = 4) {
     this.drawCelestial(body, color, size);
 
-    if (this.scale > 200) {
+    if (this.scale > this.moonsMax) {
       for (let moon of body.moons) {
         this.drawOrbit(moon, body.position);
         this.drawCelestial(moon, color, size - 1);
@@ -99,10 +109,12 @@ export class SystemRenderer {
         //Stop drawing planetary orbits above a certain zoom
         //because the computation to place the planets isn't
         //perfectly lined up.
-        if(this.scale < 5000)
-			    this.drawOrbit(body, origin);
+        if(this.scale < this.orbitMax) {
+          this.drawOrbit(body, origin);
         }
-        this.drawBodyWithMoons(body, group.color, group.drawSize);
+      }
+
+      this.drawBodyWithMoons(body, group.color, group.drawSize);
 	  }
   }
 

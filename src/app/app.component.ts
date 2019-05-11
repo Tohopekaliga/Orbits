@@ -153,6 +153,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     var ctx = this.canvasRef.nativeElement.getContext("2d");
     this.renderer = new SystemRenderer(ctx);
+    this.renderer.setOrbitMaximum(Convert.KMtoAU(30));
+    this.renderer.setMoonsMaximum(Convert.KMtoAU(1));
 
     this.doSingleRender();
   }
