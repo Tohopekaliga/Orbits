@@ -2,6 +2,7 @@ import { Orbiter } from "../physics/orbiter";
 import { OrbitalGroup } from "../physics/orbital-group";
 import { CelestialBody } from '../physics/celestial-body';
 import { Vector2 } from '../physics/math3d';
+import { Vessel } from '../physics/vessel';
 
 export class SystemRenderer {
   ctx: CanvasRenderingContext2D;
@@ -61,6 +62,25 @@ export class SystemRenderer {
 	this.ctx.strokeStyle = "grey";
 	this.ctx.stroke();
 		
+  }
+
+  drawShip(ship:Vessel) {
+    this.drawCelestial(ship, "white", 3, "red", true);
+
+    if(ship.targetPoint) {
+      this.ctx.beginPath();
+      this.ctx.arc(
+        this.dimensions.cx + ship.targetPoint.x * this.scale,
+        this.dimensions.cy + ship.targetPoint.y * this.scale,
+        2,
+        0,
+        2 * Math.PI
+      );
+      this.ctx.fillStyle = "transparent";
+      this.ctx.fill();
+      this.ctx.strokeStyle = "red";
+      this.ctx.stroke();
+    }
   }
 
   drawBodyWithMoons(body: CelestialBody, color: string = "blue", size: number = 4) {

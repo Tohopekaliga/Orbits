@@ -68,7 +68,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   fps: number;
 
   selectedBody = null;
-  earth = null;
 
   systemBodyList: PointMass[] = [];
   searchResults:PointMass[] = [];
@@ -127,8 +126,6 @@ export class AppComponent implements OnInit, AfterViewInit {
             body.addMoon(moonEntity);
           }
 
-          if (body.name == "Earth")
-            this.earth = body;
         }
 
         this.systemBodyList.push(body);
@@ -327,7 +324,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.center = this.area.divide(2);
     }
 
-    this.ships[0].targetBody = planet;
+    this.ships[0].enterOrbit(planet);
 
     if (this.paused) {
       this.doSingleRender();
@@ -448,7 +445,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     }
 
     for (let ship of this.ships) {
-      this.renderer.drawCelestial(ship, "white", 3, "red", true);
+      this.renderer.drawShip(ship);
     }
   }
   

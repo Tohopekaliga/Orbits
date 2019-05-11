@@ -9,8 +9,29 @@ export class Vessel extends Orbiter {
 
   targetBody: PointMass;
 
+  targetPoint: Vector2;
+  targetVelocity: Vector2;
+
+  enterOrbit(body:PointMass) {
+    //the vessel needs to sort out how far it needs to travel,
+    //then plot a course to follow.
+    
+    //grab some basic data
+    let approach = body.position.subtract(this.position);
+    let distance = approach.magnitude();
+
+    //let's assume we can ge there perfectly.
+    let timeToTarget = distance / this.maxVel;
+
+    //figure out where the body will be then, and target it
+    [this.targetPoint, this.targetVelocity] = body.peekPosition(timeToTarget);
+
+    this.targetBody = body;
+
+  }
+
   update(dt:number) {
-    if (!this.targetBody || this.targetBody.position == this.position) {
+    if (!this.targetPoint) {
       super.update(dt);
     }
     else {
@@ -18,37 +39,11 @@ export class Vessel extends Orbiter {
       //let gravity work its magic.
       this.gravitationalAcceleration(dt);
 
-
-      let approachVector = this.targetBody.position.subtract(this.position);
-      let distSq = approachVector.magnitudeSq();
-
-      let relativeVel = this.targetBody.velocity.subtract(this.velocity);
-      let rvel = relativeVel.magnitude();
-
-      //split acceleration across activities
-      let acc = this.acceleration * dt;
-
-      if (rvel > this.maxVel * dt) {
-
-        let difference = rvel - this.maxVel;
-
-        let adjustment = difference > acc ? acc : difference;
-        acc -= adjustment;
-
-        this.velocity.sum(relativeVel.normalized().multiply(adjustment));
-        
-      }
-      
-      if (acc > 0) {
-        let stepAccel = distSq < acc * acc ? Math.sqrt(distSq) : acc;
-
-        approachVector = approachVector.normalized().multiply(stepAccel);
-      }
-
-      this.velocity = this.velocity.sum(approachVector);
+      let approach = this.targetPoint.subtract(this.position);
+      let distance = approach.magnitude();
 
       this.position = this.position.sum(this.velocity.multiply(dt));
-      
+    
       this.recalcElements();
     }
   }
