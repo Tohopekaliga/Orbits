@@ -10,6 +10,8 @@ export class StellarBody implements PointMass {
 
   mass: number;
   radius: number;
+  //stars are the be-all-end-all in this sim.
+  soi:number = Infinity;
 
   name: string;
 
@@ -25,5 +27,9 @@ export class StellarBody implements PointMass {
 
   peekPosition(dt:number) {
     return [Vector2.clone(this.position), Vector2.clone(this.velocity)];
+  }
+
+  update(dt:number) {
+    
   }
 }

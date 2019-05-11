@@ -6,8 +6,10 @@ export interface PointMass {
   velocity: Vector2;
   mass: number;
   radius: number;
+  soi:number;
 
   name: string;
 
+  update(dt:number);
   peekPosition(dt:number);
 }

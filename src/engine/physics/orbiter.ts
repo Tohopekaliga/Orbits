@@ -27,6 +27,7 @@ M: Mean Anomaly
 
   mass: number = 0;
   radius: number = 0;
+  soi: number = 0;
 
   //μ, standard gravitational parameter, G(M+m). Computed with orbit
   GM: number;
