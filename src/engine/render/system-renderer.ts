@@ -67,11 +67,11 @@ export class SystemRenderer {
   drawShip(ship:Vessel) {
     this.drawCelestial(ship, "white", 3, "red", true);
 
-    if(ship.targetPoint) {
+    if(ship.targetBody) {
       this.ctx.beginPath();
       this.ctx.arc(
-        this.dimensions.cx + ship.targetPoint.x * this.scale,
-        this.dimensions.cy + ship.targetPoint.y * this.scale,
+        this.dimensions.cx + ship.targetBody.position.x * this.scale,
+        this.dimensions.cy + ship.targetBody.position.y * this.scale,
         2,
         0,
         2 * Math.PI

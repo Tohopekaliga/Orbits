@@ -42,8 +42,28 @@ export class Vector {
     return this.divide(norm);
   }
 
+  normalize() {
+    let norm = this.magnitude();
+    this.x /= norm;
+    this.y /= norm;
+    this.z /= norm;
+  }
+
+  setMagnitude(mag:number) {
+    this.normalize();
+    this.x *= mag;
+    this.y *= mag;
+    this.z *= mag;
+  }
+
   sum(rh: Vector) {
     return new Vector(this.x + rh.x, this.y + rh.y, this.z + rh.z);
+  }
+
+  add(rh: Vector) {
+    this.x += rh.x;
+    this.y += rh.y;
+    this.z += rh.z
   }
 
   subtract(rh: Vector) {
@@ -77,6 +97,10 @@ export class Vector2 {
     return new Vector2(vec.x, vec.y);
   }
 
+  dot(rh: Vector2) {
+    return this.x * rh.x + this.y * rh.y;
+  }
+
   magnitudeSq() {
     return this.x * this.x + this.y * this.y;
   }
@@ -98,8 +122,25 @@ export class Vector2 {
     return this.divide(norm);
   }
 
+  normalize() {
+    let norm = this.magnitude();
+    this.x /= norm;
+    this.y /= norm;
+  }
+
+  setMagnitude(mag:number) {
+    this.normalize();
+    this.x *= mag;
+    this.y *= mag;
+  }
+
   sum(rh: Vector2) {
     return new Vector2(this.x + rh.x, this.y + rh.y);
+  }
+
+  add(rh: Vector2) {
+    this.x += rh.x;
+    this.y += rh.y;
   }
 
   subtract(rh: Vector2) {

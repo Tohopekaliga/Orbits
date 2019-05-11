@@ -2,47 +2,34 @@ import { Orbiter } from './orbiter';
 import { Vector2, Convert } from './math3d';
 import { PointMass } from './point-mass';
 
+
 export class Vessel extends Orbiter {
   acceleration:number = 1; //m/ss
   maxAccel: Vector2;
-  maxVel: number = 2e6; //m/s, relative to  target
+  maxVel: number = 2e5; //m/s, relative to  target
 
-  targetBody: PointMass;
-
-  targetPoint: Vector2;
-  targetVelocity: Vector2;
+  targetBody:PointMass;
 
   enterOrbit(body:PointMass) {
-    //the vessel needs to sort out how far it needs to travel,
-    //then plot a course to follow.
-    
-    //grab some basic data
-    let approach = body.position.subtract(this.position);
-    let distance = approach.magnitude();
-
-    //let's assume we can ge there perfectly.
-    let timeToTarget = distance / this.maxVel;
-
-    //figure out where the body will be then, and target it
-    [this.targetPoint, this.targetVelocity] = body.peekPosition(timeToTarget);
+    //Would be wise to do some planning here if doing
+    //a proper trajectory.
 
     this.targetBody = body;
 
   }
 
   update(dt:number) {
-    if (!this.targetPoint) {
+    if (!this.targetBody) {
       super.update(dt);
     }
     else {
 
+      this.updateApproach(dt);
+      
       //let gravity work its magic.
       this.gravitationalAcceleration(dt);
 
-      let approach = this.targetPoint.subtract(this.position);
-      let distance = approach.magnitude();
-
-      this.position = this.position.sum(this.velocity.multiply(dt));
+      this.position.add(this.velocity.multiply(dt));
     
       this.recalcElements();
     }
@@ -58,6 +45,27 @@ export class Vessel extends Orbiter {
 
     let gravityMod = localPosition.normalized().multiply(gravitation * dt);
 
-    this.velocity = this.velocity.sum(gravityMod);
+    this.velocity.add(gravityMod);
+  }
+
+  protected updateApproach(dt:number) {
+
+
+    let approach = this.targetBody.position.subtract(this.position);
+    let distanceSq = approach.magnitudeSq();
+    let mvS = this.maxVel ** 2;
+
+    //scifi engines, perfect acceleration. Way easier math.
+    let speed = this.maxVel;
+    if(distanceSq < mvS) {
+      //now arriving...
+      this.targetBody = null;
+
+      speed = Math.sqrt(distanceSq);
+      //TODO: enter orbit
+    }
+
+    this.velocity = approach.normalized().multiply(speed);
+
   }
 }
