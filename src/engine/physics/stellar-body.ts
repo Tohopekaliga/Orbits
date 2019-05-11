@@ -12,6 +12,7 @@ export class StellarBody implements PointMass {
   radius: number;
   //stars are the be-all-end-all in this sim.
   soi:number = Infinity;
+  parent:PointMass = null;
 
   name: string;
 

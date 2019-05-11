@@ -7,6 +7,7 @@ export interface PointMass {
   mass: number;
   radius: number;
   soi:number;
+  parent:PointMass;
 
   name: string;
 

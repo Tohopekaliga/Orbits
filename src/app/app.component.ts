@@ -324,7 +324,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.center = this.area.divide(2);
     }
 
-    this.ships[0].enterOrbit(planet);
+    this.ships[0].goToBody(planet);
 
     if (this.paused) {
       this.doSingleRender();
