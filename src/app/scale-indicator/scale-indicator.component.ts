@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Convert } from '../physics/math3d';
+import { Convert } from '../../engine/physics/math3d';
 
 @Component({
   selector: 'orb-scale-indicator',

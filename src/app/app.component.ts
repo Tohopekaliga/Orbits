@@ -1,13 +1,13 @@
 import { Component, ViewChild, ElementRef, OnInit, AfterViewInit } from "@angular/core";
 import { HostListener } from "@angular/core";
-import { PointMass } from "./physics/point-mass";
-import { StellarBody } from "./physics/stellar-body";
-import { CelestialBody } from "./physics/celestial-body";
-import { OrbitalGroup } from "./physics/orbital-group";
-import { SystemRenderer } from "./engine/system-renderer";
+import { PointMass } from "../engine/physics/point-mass";
+import { StellarBody } from "../engine/physics/stellar-body";
+import { CelestialBody } from "../engine/physics/celestial-body";
+import { OrbitalGroup } from "../engine/physics/orbital-group";
+import { SystemRenderer } from "../engine/render/system-renderer";
 import Sol from "../assets/sol.json";
-import { Vector2, Convert } from './physics/math3d';
-import { Vessel } from './physics/vessel';
+import { Vector2, Convert } from '../engine/physics/math3d';
+import { Vessel } from '../engine/physics/vessel';
 
 var mainComponent;
 
