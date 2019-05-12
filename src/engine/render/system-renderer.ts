@@ -48,7 +48,7 @@ export class SystemRenderer {
     this.ctx.clearRect(0, 0, this.dimensions.width, this.dimensions.height);
   }
   
-  drawOrbit(body:Orbiter, origin:Vector2) {
+  drawOrbit(body:Orbiter, origin:Vector2, color:string="grey") {
 	this.ctx.beginPath();
 	this.ctx.ellipse(
 		this.dimensions.cx - body.ellipse.cx * this.scale + origin.x * this.scale,
@@ -59,7 +59,7 @@ export class SystemRenderer {
 		0,
 		2 * Math.PI
 	);
-	this.ctx.strokeStyle = "grey";
+	this.ctx.strokeStyle = color;
 	this.ctx.stroke();
 		
   }
@@ -83,12 +83,12 @@ export class SystemRenderer {
     }
   }
 
-  drawBodyWithMoons(body: CelestialBody, color: string = "blue", size: number = 4) {
+  drawBodyWithMoons(body: CelestialBody, color: string = "blue", size: number = 4, orbitColor:string="grey") {
     this.drawCelestial(body, color, size);
 
     if (this.scale > this.moonsMax) {
       for (let moon of body.moons) {
-        this.drawOrbit(moon, body.position);
+        this.drawOrbit(moon, body.position, orbitColor);
         this.drawCelestial(moon, color, size - 1);
       }
     }
@@ -130,7 +130,7 @@ export class SystemRenderer {
         //because the computation to place the planets isn't
         //perfectly lined up.
         if(this.scale < this.orbitMax) {
-          this.drawOrbit(body, origin);
+          this.drawOrbit(body, origin, group.orbitColor);
         }
       }
 

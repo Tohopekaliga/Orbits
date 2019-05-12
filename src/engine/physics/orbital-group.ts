@@ -12,6 +12,7 @@ export class OrbitalGroup {
 
   name: string;
   color: string;
+  orbitColor: string;
   paths: boolean;
   drawSize:number;
 
@@ -20,13 +21,15 @@ export class OrbitalGroup {
   constructor(
     name: string = "",
     color: string = "red",
-	drawSize: number = 4,
-    paths: boolean = false
+	  drawSize: number = 4,
+    paths: boolean = false,
+    orbitColor: string = "grey"
   ) {
     this.name = name;
     this.color = color;
     this.paths = paths;
-	this.drawSize = drawSize;
+    this.drawSize = drawSize;
+    this.orbitColor = orbitColor;
   }
 
   update(dt: number): void {

@@ -13,6 +13,13 @@ var groupSpec = [
         paths: true
     },
     {
+        name: "dwarfs",
+        color: "olive",
+        orbitColor: "#222222",
+        size: 4,
+        paths: true
+    },
+    {
         name: "mainBelt",
         color: "grey",
         size: 3,
@@ -47,7 +54,13 @@ export class SystemGenerator {
             
             let groupData = data[groupName];
 
-            var group = new OrbitalGroup(groupName, groupSpec[g].color, groupSpec[g].size, groupSpec[g].paths);
+            let orbitColor = "grey";
+            if(groupSpec[g].orbitColor) {
+                orbitColor = groupSpec[g].orbitColor;
+                console.log(groupSpec[g].orbitColor);
+            }
+
+            var group = new OrbitalGroup(groupName, groupSpec[g].color, groupSpec[g].size, groupSpec[g].paths, orbitColor);
         
         
             for (let c = 0; c < groupData.length; c++) {
