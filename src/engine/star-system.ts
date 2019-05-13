@@ -61,9 +61,9 @@ export class StarSystem {
     let closestMag = leeway;
 
     //scale to view Moons. Change this when config is set up for that.
-    if(checkMoons && selectedBody) {
+    if(checkMoons && selectedBody && selectedBody != this.star) {
       
-      let parentBody = selectedBody.parent.moons ? selectedBody.parent : selectedBody;
+      let parentBody = (selectedBody.parent && selectedBody.parent.moons) ? selectedBody.parent : selectedBody;
       
       for(let m = 0; m < parentBody.moons.length; m++) {
         let magnitude = point.subtract(parentBody.moons[m].position).magnitudeSq();
