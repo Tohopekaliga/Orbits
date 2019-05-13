@@ -140,6 +140,16 @@ M: Mean Anomaly
 
     return E;
   }
+  
+  protected meanAnomalyFromTrue() {
+    
+    //Eccentric anomaly, computed from e & v
+    let E = Math.atan2(Math.sqrt(1 - this.e ** 2) * Math.sin(this.v), this.e + Math.cos(this.v));
+    
+    //kepler's equation
+    this.M = E - this.e * Math.sin(E);
+    
+  }
 
   protected trueAnomaly() {
 
@@ -154,16 +164,20 @@ M: Mean Anomaly
       cos - this.e
     );
   }
+  
+  protected computeGM() {
+    
+    let mass = this.parent.mass + this.mass;
+    this.GM = Convert.G * mass;
+  }
 
   protected computeMeanMotion() {
 
     //a in meters, M as mass of parent, m as mass of body
     //n = sqrt( G(M+m)/a^3 ), radians/second
 
-    let a = this.a;
-    let mass = this.parent.mass + this.mass;
-    this.GM = Convert.G * mass;
-    let a_cubed = a * a * a;
+    this.computeGM();
+    let a_cubed = this.a ** 3;
 
     //Mean Motion, the total angular change per second for this orbit
     this.meanMotion = Math.sqrt(this.GM / a_cubed);
@@ -235,5 +249,31 @@ M: Mean Anomaly
   }
 
   //overwrite elements based on state vectors
-  protected recalcElements() { }
+  protected recalcElements() {
+  
+    this.computeGM();
+
+    let speedSq = this.velocity.magnitudeSq();
+    let altitude = this.position.magnitude();
+    
+    let evec = this.position
+      .multiply(speedSq - this.GM / altitude)
+      .subtract(this.velocity.multiply(this.position.dot(this.velocity)))
+      .divide(this.GM);
+
+    this.e = evec.magnitude();
+    
+    let mechE = speedSq / 2 - this.GM / altitude;
+    
+    this.a = -this.GM / 2 * mechE;
+    
+    this.w = Math.acos(evec.x / evec.magnitude());
+    
+    this.v = Math.acos(evec.dot(this.position) / this.e * altitude);
+    
+    this.meanAnomalyFromTrue();
+    
+    this.calculateOrbit();
+
+  }
 }
