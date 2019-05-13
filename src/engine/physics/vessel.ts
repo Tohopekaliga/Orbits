@@ -2,6 +2,11 @@ import { Orbiter } from './orbiter';
 import { Vector2, Convert } from './math3d';
 import { PointMass } from './point-mass';
 
+enum VesselState {
+  Orbiting,
+  Maneuvering,
+  Teathered
+}
 
 export class Vessel extends Orbiter {
   acceleration:number = 1; //m/ss
@@ -9,13 +14,16 @@ export class Vessel extends Orbiter {
   maxVel: number = 2e5; //m/s, relative to  target
 
   targetBody:PointMass;
-  targetDistance:number;
+  targetDistance: number;
+
+  state:VesselState = VesselState.Orbiting;
 
   goToBody(body:PointMass) {
     //Would be wise to do some planning here if doing
     //a proper trajectory.
 
     this.targetBody = body;
+    this.state = VesselState.Maneuvering;
 
   }
 
@@ -39,18 +47,11 @@ export class Vessel extends Orbiter {
 
     if(this.targetBody.mass == 0) {
       //a body with no set mass can't be orbited properly, so...just sit on position.
-      //TODO: DO THIS A BETTER WAY, OMG
-      // @ts-ignore conversion
-      let orbital:Orbiter = this.targetBody;
-      this.a = orbital.a;
-      this.e = orbital.e;
-      this.i = orbital.i;
-      this.l = orbital.l;
-      this.w = orbital.w;
-      this.M = orbital.mass;
-      this.v = orbital.v;
-    } else {
+      this.parent = this.targetBody;
+      this.state = VesselState.Teathered;
 
+    } else {
+      //force a circular orbit
       let relativePos = this.position.subtract(this.parent.position);
       this.a = relativePos.magnitude();
       this.e = 1e-7;
@@ -62,32 +63,50 @@ export class Vessel extends Orbiter {
       if(this.a < this.parent.radius) {
         this.a = this.parent.radius * 2;
       }
+      this.state = VesselState.Orbiting;
     }
-    console.log(this.targetBody, this);
+
     this.calculateOrbit();
     this.calculateVectors();
 
 
   }
 
-  update(dt:number) {
-    if (!this.targetBody) {
-      super.update(dt);
+  update(dt: number) {
+
+    switch (this.state) {
+      case VesselState.Orbiting: {
+        super.update(dt);
+        break;
+      }
+      case VesselState.Maneuvering: {
+
+        if (this.updateApproach(dt))
+          return;
+
+        //let gravity work its magic.
+        this.gravitationalAcceleration(dt);
+
+        this.position.add(this.velocity.multiply(dt));
+
+        this.updateSOI();
+
+        this.recalcElements();
+
+        break;
+      }
+      case VesselState.Teathered: {
+        this.position = Vector2.clone(this.parent.position);
+        this.velocity = Vector2.clone(this.parent.velocity);
+        break;
+      }
+      default: {
+        console.log("Unknown Vessel State for " + this.name, this.state);
+        this.state = VesselState.Orbiting;
+        break;
+      }
     }
-    else {
 
-      if(this.updateApproach(dt))
-        return;
-      
-      //let gravity work its magic.
-      this.gravitationalAcceleration(dt);
-
-      this.position.add(this.velocity.multiply(dt));
-
-      this.updateSOI();
-    
-      this.recalcElements();
-    }
   }
 
   //Be affected by gravity of the parent body
