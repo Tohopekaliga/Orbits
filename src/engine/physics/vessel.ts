@@ -3,15 +3,16 @@ import { Vector2, Convert } from './math3d';
 import { PointMass } from './point-mass';
 
 enum VesselState {
-  Orbiting,
-  Maneuvering,
-  Teathered
+  Orbiting,     //kepler orbit, using elements
+  Maneuvering,  //overriding orbital motion via thrust
+  Teathered,    //clamped to parent body position/velocity
+  Coasting      //computing gravitational effects
 }
 
 export class Vessel extends Orbiter {
   acceleration:number = 1; //m/ss
   maxAccel: Vector2;
-  maxVel: number = 2e5; //m/s, relative to  target
+  maxVel: number = 5e4; //m/s, relative to  target
 
   targetBody:PointMass;
   targetDistance: number;
@@ -23,7 +24,19 @@ export class Vessel extends Orbiter {
     //a proper trajectory.
 
     this.targetBody = body;
-    this.state = VesselState.Maneuvering;
+
+    if (this.targetBody) {
+      this.state = VesselState.Maneuvering;
+    }
+    else {
+      this.state = VesselState.Coasting;
+
+      //some trickery to make unpowered flight feel less weird (because scifi engines)
+
+      let altitude = Convert.KMtoAU(this.position.magnitude() / 1000);
+      altitude = Math.max(altitude, 1) ** 2;
+        this.velocity.setMagnitude(this.velocity.magnitude() / altitude);
+    }
 
   }
 
@@ -100,6 +113,11 @@ export class Vessel extends Orbiter {
         this.velocity = Vector2.clone(this.parent.velocity);
         break;
       }
+      case VesselState.Coasting: {
+        this.gravitationalAcceleration(dt);
+        this.position.add(this.velocity.multiply(dt));
+        break;
+      }
       default: {
         console.log("Unknown Vessel State for " + this.name, this.state);
         this.state = VesselState.Orbiting;
@@ -118,7 +136,6 @@ export class Vessel extends Orbiter {
     let gravitation = -Convert.G * (this.parent.mass / altitudeSq);
 
     let gravityMod = localPosition.normalized().multiply(gravitation * dt);
-
     this.velocity.add(gravityMod);
   }
 
