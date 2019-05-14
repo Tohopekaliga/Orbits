@@ -1,6 +1,6 @@
 import { Orbiter } from "./orbiter";
 import { PointMass } from "./point-mass";
-import { Vector2 } from './math3d';
+import { Vector2 } from '../math3d';
 
 export class CelestialBody extends Orbiter {
 

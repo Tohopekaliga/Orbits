@@ -1,5 +1,5 @@
 import { PointMass } from './point-mass';
-import { Vector2 } from './math3d';
+import { Vector2 } from '../math3d';
 
 //As stellar bodies are the center of the computation, they have no orbital parameters.
 //Close Binaries, etc should derive from StellarBody (and do their own orbiting within)

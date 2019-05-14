@@ -1,9 +1,6 @@
-import { PointMass } from './physics/point-mass';
+import { PointMass, StellarBody, CelestialBody, OrbitalGroup } from './physics';
 import { StarSystem } from './star-system';
-import { StellarBody } from './physics/stellar-body';
-import { CelestialBody } from './physics/celestial-body';
-import { OrbitalGroup } from './physics/orbital-group';
-import { Convert } from './physics/math3d';
+import { Convert } from './math3d';
 
 var groupSpec = [
   {

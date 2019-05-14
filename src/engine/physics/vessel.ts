@@ -1,5 +1,5 @@
 import { Orbiter } from './orbiter';
-import { Vector2, Convert } from './math3d';
+import { Vector2, Convert } from '../math3d';
 import { PointMass } from './point-mass';
 
 enum VesselState {

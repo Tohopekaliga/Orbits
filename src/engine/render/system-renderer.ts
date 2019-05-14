@@ -1,8 +1,5 @@
-import { Orbiter } from "../physics/orbiter";
-import { OrbitalGroup } from "../physics/orbital-group";
-import { CelestialBody } from '../physics/celestial-body';
-import { Vector2 } from '../physics/math3d';
-import { Vessel } from '../physics/vessel';
+import { Orbiter, OrbitalGroup, CelestialBody, Vessel } from "../physics/";
+import { Vector2 } from '../math3d';
 
 export class SystemRenderer {
   ctx: CanvasRenderingContext2D;

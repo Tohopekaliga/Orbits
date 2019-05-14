@@ -1,12 +1,11 @@
 import { Component, ViewChild, ElementRef, OnInit, AfterViewInit } from "@angular/core";
 import { HostListener } from "@angular/core";
-import { PointMass } from "../engine/physics/point-mass";
+import { PointMass, Vessel } from "../engine/physics/";
+import { Vector2, Convert } from "../engine/math3d";
 import { StarSystem } from "../engine/star-system";
 import { SystemRenderer } from "../engine/render/system-renderer";
 import { SystemGenerator } from "../engine/system-generator";
 import Sol from "../assets/sol.json";
-import { Vector2, Convert } from '../engine/physics/math3d';
-import { Vessel } from '../engine/physics/vessel';
 
 var mainComponent;
 
