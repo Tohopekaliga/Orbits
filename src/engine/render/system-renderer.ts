@@ -1,4 +1,4 @@
-import { Orbiter, OrbitalGroup, CelestialBody, Vessel } from "../physics/";
+import { PointMass, Orbiter, OrbitalGroup, CelestialBody, Vessel } from "../physics/";
 import { Vector2 } from '../math3d';
 
 export class SystemRenderer {
@@ -44,12 +44,22 @@ export class SystemRenderer {
   clear() {
     this.ctx.clearRect(0, 0, this.dimensions.width, this.dimensions.height);
   }
+
+  drawCircle(point: Vector2, radius: number) {
+    this.ctx.arc(
+      this.dimensions.cx + point.x * this.scale,
+      this.dimensions.height - (this.dimensions.cy + point.y * this.scale),
+      radius,
+      0,
+      2 * Math.PI
+    );
+  }
   
   drawOrbit(body:Orbiter, origin:Vector2, color:string="grey") {
 	this.ctx.beginPath();
 	this.ctx.ellipse(
 		this.dimensions.cx - body.ellipse.cx * this.scale + origin.x * this.scale,
-		this.dimensions.cy - body.ellipse.cy * this.scale + origin.y * this.scale,
+		this.dimensions.height - (this.dimensions.cy - body.ellipse.cy * this.scale + origin.y * this.scale),
 		body.ellipse.rx * this.scale,
 		body.ellipse.ry * this.scale,
 		body.w,
@@ -66,13 +76,9 @@ export class SystemRenderer {
 
     if(ship.targetBody) {
       this.ctx.beginPath();
-      this.ctx.arc(
-        this.dimensions.cx + ship.targetBody.position.x * this.scale,
-        this.dimensions.cy + ship.targetBody.position.y * this.scale,
-        2,
-        0,
-        2 * Math.PI
-      );
+
+      this.drawCircle(ship.targetBody.position, 2);
+
       this.ctx.fillStyle = "transparent";
       this.ctx.fill();
       this.ctx.strokeStyle = "red";
@@ -91,15 +97,11 @@ export class SystemRenderer {
     }
   }
 
-  drawCelestial(body: Orbiter, color:string = "blue", size:number = 4, stroke:string = "navy", drawVelocity:boolean = false) {
+  drawCelestial(body: PointMass, color:string = "blue", size:number = 4, stroke:string = "navy", drawVelocity:boolean = false) {
     this.ctx.beginPath();
-    this.ctx.arc(
-      this.dimensions.cx + body.position.x * this.scale,
-      this.dimensions.cy + body.position.y * this.scale,
-      size,
-      0,
-      2 * Math.PI
-    );
+
+    this.drawCircle(body.position, size);
+
     this.ctx.fillStyle = color;
     this.ctx.fill();
     this.ctx.strokeStyle = stroke;
@@ -109,10 +111,10 @@ export class SystemRenderer {
       this.ctx.beginPath();
       this.ctx.moveTo(
         this.dimensions.cx + body.position.x * this.scale,
-        this.dimensions.cy + body.position.y * this.scale);
+        this.dimensions.height - (this.dimensions.cy + body.position.y * this.scale));
       this.ctx.lineTo(
         this.dimensions.cx + body.position.x * this.scale + body.velocity.x * this.scale,
-        this.dimensions.cy + body.position.y * this.scale + body.velocity.y * this.scale);
+        this.dimensions.height - (this.dimensions.cy + body.position.y * this.scale + body.velocity.y * this.scale));
       this.ctx.stroke();
     }
   }

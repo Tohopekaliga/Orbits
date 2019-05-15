@@ -63,9 +63,8 @@ M: Mean Anomaly
     this.i = Convert.DegreesToRad(i);
     this.l = Convert.DegreesToRad(l);
 
-    //as the simulation currently uses HTML canvas coordinates, the XY coordinate system is flipped.
-    //i > Pi/2 means retrograde
-    if (this.i < Math.PI / 2) {
+    //i > Pi/2 means retrograde, fake it
+    if (this.i > Math.PI / 2) {
       this.w *= -1;
       this.M *= -1;
     }
@@ -182,8 +181,8 @@ M: Mean Anomaly
     //Mean Motion, the total angular change per second for this orbit
     this.meanMotion = Math.sqrt(this.GM / a_cubed);
 
-    //flip rotation direction to account for inverted Y axis.
-    if (this.i < Math.PI / 2)
+    //flip rotation direction to account for retrograde
+    if (this.i > Math.PI / 2)
       this.meanMotion *= -1;
   }
 
@@ -253,7 +252,7 @@ M: Mean Anomaly
   protected recalcElements() {
   
     this.computeGM();
-
+    
     let speedSq = this.velocity.magnitudeSq();
     let altitude = this.position.magnitude();
     
@@ -266,15 +265,20 @@ M: Mean Anomaly
     
     let mechE = speedSq / 2 - this.GM / altitude;
     
-    this.a = -this.GM / 2 * mechE;
+    this.a = -this.GM / (2 * mechE);
     
     this.w = Math.acos(evec.x / evec.magnitude());
+
     
-    this.v = Math.acos(evec.dot(this.position) / this.e * altitude);
+    this.v = Math.acos(evec.dot(this.position) / (this.e * altitude));
+
+    //because of using Canvas2d coordinates
+    //this.w *= -1;
+    //this.v *= -1;
     
     this.meanAnomalyFromTrue();
+
     
     this.calculateOrbit();
-
   }
 }

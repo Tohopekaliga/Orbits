@@ -122,8 +122,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   onFieldClick(event) {
     //convert the click location to simulation coordinates.
-    let point = new Vector2(event.center.x - this.center.x, event.center.y - this.center.y)
+    let point = new Vector2(event.center.x - this.center.x, this.area.y - event.center.y - this.center.y)
     point = point.multiply(Convert.km_au * 1000 / this.scale);
+
     
     //account for current body focus
     if(this.selectedBody) {
@@ -198,7 +199,7 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.deselectBody();
       
       this.center.x = this.panPoint.x + event.deltaX;
-      this.center.y = this.panPoint.y + event.deltaY;
+      this.center.y = this.panPoint.y - event.deltaY;
     }
     
     if (this.paused)
@@ -334,7 +335,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     );
 
     this.renderer.clear();
-    this.renderer.drawStar();
+    this.renderer.drawCelestial(this.solSystem.star, "yellow", 5);
 
     for (let group of this.solSystem.bodies) {
       this.renderer.drawGroup(group);
