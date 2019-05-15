@@ -1,12 +1,12 @@
 import { PointMass } from './point-mass';
-import { Vector2 } from '../math3d';
+import { Vector } from '../math3d';
 
 //As stellar bodies are the center of the computation, they have no orbital parameters.
 //Close Binaries, etc should derive from StellarBody (and do their own orbiting within)
 
 export class StellarBody implements PointMass {
-  position: Vector2;
-  velocity: Vector2;
+  position: Vector;
+  velocity: Vector;
 
   mass: number;
   radius: number;
@@ -17,8 +17,8 @@ export class StellarBody implements PointMass {
   name: string;
 
   constructor(name:string, mass: number, radius: number) {
-    this.position = new Vector2();
-    this.velocity = new Vector2();
+    this.position = new Vector();
+    this.velocity = new Vector();
 
     this.mass = mass;
     this.radius = radius;
@@ -27,7 +27,7 @@ export class StellarBody implements PointMass {
   }
 
   peekPosition(dt:number) {
-    return [Vector2.clone(this.position), Vector2.clone(this.velocity)];
+    return [Vector.clone(this.position), Vector.clone(this.velocity)];
   }
 
   update(dt:number) {

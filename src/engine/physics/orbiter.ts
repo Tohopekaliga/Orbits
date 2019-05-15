@@ -1,4 +1,4 @@
-import { Vector2, Convert } from "../math3d";
+import { Vector, Convert } from "../math3d";
 import { PointMass } from './point-mass';
 import { isNull } from 'util';
 
@@ -35,8 +35,8 @@ M: Mean Anomaly
   //semi-minor axis
   b: number;
 
-  position: Vector2;
-  velocity: Vector2;
+  position: Vector;
+  velocity: Vector;
 
   //the body this Orbiter Orbits.
   parent: PointMass;
@@ -76,8 +76,8 @@ M: Mean Anomaly
     this.parent = parent;
     this.name = name;
 
-    this.velocity = new Vector2();
-    this.position = new Vector2();
+    this.velocity = new Vector();
+    this.position = new Vector();
 
     this.calculateOrbit();
     this.calculateVectors();
@@ -108,13 +108,13 @@ M: Mean Anomaly
   }
   
   peekPosition(dt:number) {
-    let realPos = Vector2.clone(this.position);
-    let realVel = Vector2.clone(this.velocity);
+    let realPos = Vector.clone(this.position);
+    let realVel = Vector.clone(this.velocity);
     let realM = this.M;
 
     this.update(dt);
 
-    let ret = [Vector2.clone(this.position), Vector2.clone(this.velocity)];
+    let ret = [Vector.clone(this.position), Vector.clone(this.velocity)];
 
     this.position = realPos;
     this.velocity = realVel;
@@ -202,9 +202,10 @@ M: Mean Anomaly
 
     this.position.x = r * cos_v;
     this.position.y = r * sin_v;
+    this.position.z = 0;
 
     //rotate the position to be oriented with the actual orbit
-    this.position = this.position.rotate(this.w);
+    this.position = this.position.rotateZ(this.w);
 
 
 
@@ -217,7 +218,7 @@ M: Mean Anomaly
     //sqrt(sinv^2 * a^2 + cosv^2 * b^2)
     /*let velocity_denominator = Math.sqrt(sin_v* sin_v * this.a * this.a + cos_v * cos_v * this.b * this.b);
     
-    let tangent = new Vector2(-(sin_v * this.a) / velocity_denominator, (cos_v * this.b) / velocity_denominator);
+    let tangent = new Vector(-(sin_v * this.a) / velocity_denominator, (cos_v * this.b) / velocity_denominator);
     tangent = tangent.sum(this.position);
 
     this.velocity = tangent.normalized().multiply(linearVelocity);*/
@@ -238,8 +239,8 @@ M: Mean Anomaly
     this.ellipse.cx = this.e * this.a;
     this.ellipse.cy = 0;
 
-    let center = new Vector2(this.ellipse.cx, this.ellipse.cy);
-    center = center.rotate(this.w);
+    let center = new Vector(this.ellipse.cx, this.ellipse.cy);
+    center = center.rotateZ(this.w);
 
     this.ellipse.cx = center.x;
     this.ellipse.cy = center.y;

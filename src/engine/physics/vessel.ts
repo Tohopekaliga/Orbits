@@ -1,5 +1,5 @@
 import { Orbiter } from './orbiter';
-import { Vector2, Convert } from '../math3d';
+import { Vector, Convert } from '../math3d';
 import { PointMass } from './point-mass';
 
 enum VesselState {
@@ -11,7 +11,7 @@ enum VesselState {
 
 export class Vessel extends Orbiter {
   acceleration:number = 1; //m/ss
-  maxAccel: Vector2;
+  maxAccel: Vector;
   maxVel: number = 5e4; //m/s, relative to  target
 
   targetBody:PointMass;
@@ -109,8 +109,8 @@ export class Vessel extends Orbiter {
         break;
       }
       case VesselState.Teathered: {
-        this.position = Vector2.clone(this.parent.position);
-        this.velocity = Vector2.clone(this.parent.velocity);
+        this.position = Vector.clone(this.parent.position);
+        this.velocity = Vector.clone(this.parent.velocity);
         break;
       }
       case VesselState.Coasting: {

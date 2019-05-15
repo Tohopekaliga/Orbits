@@ -1,5 +1,5 @@
 import { PointMass, StellarBody, OrbitalGroup, Vessel } from './physics';
-import { Vector2 } from './math3d';
+import { Vector, Vector2 } from './math3d';
 import { SystemRenderer } from './render/system-renderer';
 
 //Overall data object holding all bodies in a given Star System (such as Sol)
@@ -57,13 +57,15 @@ export class StarSystem {
     let closestPlanet = null;
     let closestMag = leeway;
 
+    let point3d = new Vector(point.x, point.y, 0);
+
     //scale to view Moons. Change this when config is set up for that.
     if(checkMoons && selectedBody && selectedBody != this.star) {
       
       let parentBody = (selectedBody.parent && selectedBody.parent.moons) ? selectedBody.parent : selectedBody;
       
       for(let m = 0; m < parentBody.moons.length; m++) {
-        let magnitude = point.subtract(parentBody.moons[m].position).magnitudeSq();
+        let magnitude = point3d.subtract(parentBody.moons[m].position).magnitudeSq();
 
         if (magnitude < closestMag) {
           closestMag = magnitude;
@@ -74,7 +76,7 @@ export class StarSystem {
 
     //clicking the star?
     {
-      let magnitude = point.subtract(this.star.position).magnitudeSq();
+      let magnitude = point3d.subtract(this.star.position).magnitudeSq();
       if (magnitude < closestMag) {
         closestMag = magnitude;
         closestPlanet = this.star;
@@ -83,7 +85,7 @@ export class StarSystem {
 
     for (let b = 0; b < this.bodies.length; b++) {
       for (let c = 0; c < this.bodies[b].entityList.length; c++) {
-        let magnitude = point.subtract(this.bodies[b].entityList[c].position).magnitudeSq();
+        let magnitude = point3d.subtract(this.bodies[b].entityList[c].position).magnitudeSq();
 
         if (magnitude < closestMag) {
           closestMag = magnitude;

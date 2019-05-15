@@ -34,6 +34,14 @@ export class Vector {
     return Math.sqrt(this.magnitudeSq());
   }
 
+  distanceSq(rh: Vector) {
+    return this.subtract(rh).magnitudeSq();
+  }
+
+  distance(rh: Vector) {
+    return Math.sqrt(this.distanceSq(rh));
+  }
+
   normalized() {
     let norm = this.magnitude();
     return this.divide(norm);
@@ -77,5 +85,24 @@ export class Vector {
 
   divide(val: number) {
     return new Vector(this.x / val, this.y / val, this.z / val);
+  }
+
+  rotate(radians: number) {
+    return this.rotateZ(radians);
+  }
+
+  rotateZ(radians: number) {
+    let cos = Math.cos(radians);
+    let sin = Math.sin(radians);
+
+    return new Vector(this.x * cos - this.y * sin, this.x * sin + this.y * cos, this.z);
+  }
+
+  angle() {
+    return this.angleZ();
+  }
+
+  angleZ() {
+    return Math.atan2(this.y, this.x);
   }
 }
