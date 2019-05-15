@@ -4,6 +4,11 @@ export class Vector {
   y: number;
   z: number;
 
+
+  static I: Vector = new Vector(1, 0, 0);
+  static J: Vector = new Vector(0, 1, 0);
+  static K: Vector = new Vector(0, 0, 1);
+
   constructor(x = 0, y = 0, z = 0) {
     this.x = x;
     this.y = y;
