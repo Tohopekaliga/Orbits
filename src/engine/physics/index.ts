@@ -4,3 +4,4 @@ export * from "./orbiter";
 export * from "./celestial-body";
 export * from "./orbital-group";
 export * from "./vessel";
+export * from "./orbit-types";

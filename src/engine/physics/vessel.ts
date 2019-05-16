@@ -34,26 +34,10 @@ export class Vessel extends Orbiter {
       //some trickery to make unpowered flight feel less weird (because scifi engines)
 
       let altitude = Convert.KMtoAU(this.position.magnitude() / 1000);
-      altitude = Math.max(altitude, 1) ** 2;
+      altitude = Math.max(altitude, 1.1) ** 2;
         this.velocity.setMagnitude(this.velocity.magnitude() / altitude);
     }
 
-  }
-
-  updateSOI() {
-    //infinity is the Primary, so check destination
-    if(this.parent.soi === Infinity) {
-      if(this.targetBody.soi && this.targetDistance <= this.targetBody.soi) {
-        this.parent = this.targetBody;
-      }
-    }
-    else {
-      let parentDistance = this.position.subtract(this.parent.position).magnitudeSq();
-
-      if(parentDistance > this.parent.soi ** 2) {
-        this.parent = this.parent.parent;
-      }
-    }
   }
 
   protected enterOrbit() {
@@ -85,6 +69,22 @@ export class Vessel extends Orbiter {
 
   }
 
+  updateSOI() {
+    //infinity is the Primary, so check destination
+    if (this.parent.soi === Infinity) {
+      if (this.targetBody.soi && this.targetDistance <= this.targetBody.soi) {
+        this.parent = this.targetBody;
+      }
+    }
+    else {
+      let parentDistance = this.position.subtract(this.parent.position).magnitudeSq();
+
+      if (parentDistance > this.parent.soi ** 2) {
+        this.parent = this.parent.parent;
+      }
+    }
+  }
+
   update(dt: number) {
 
     switch (this.state) {
@@ -99,12 +99,9 @@ export class Vessel extends Orbiter {
 
         //let gravity work its magic.
         this.gravitationalAcceleration(dt);
-
         this.position.add(this.velocity.multiply(dt));
 
         this.updateSOI();
-
-        this.recalcElements();
 
         break;
       }
@@ -116,6 +113,10 @@ export class Vessel extends Orbiter {
       case VesselState.Coasting: {
         this.gravitationalAcceleration(dt);
         this.position.add(this.velocity.multiply(dt));
+        console.log(this);
+        this.recalcElements();
+        console.log(this);
+        this.state = VesselState.Orbiting;
         break;
       }
       default: {
@@ -125,18 +126,6 @@ export class Vessel extends Orbiter {
       }
     }
 
-  }
-
-  //Be affected by gravity of the parent body
-  gravitationalAcceleration(dt:number) {
-
-    let localPosition = this.position.subtract(this.parent.position);
-    let altitudeSq = localPosition.magnitudeSq();
-
-    let gravitation = -Convert.G * (this.parent.mass / altitudeSq);
-
-    let gravityMod = localPosition.normalized().multiply(gravitation * dt);
-    this.velocity.add(gravityMod);
   }
 
   protected updateApproach(dt:number) {

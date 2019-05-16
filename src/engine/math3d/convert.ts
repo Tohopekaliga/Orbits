@@ -20,6 +20,9 @@ export class Convert {
   //Universal Gravitation Constant
   static G: number = 6.67408e-11;
 
+  //Small number
+  static Epsilon: number = 1e-10;
+
   //Light Years to AU
   static LYtoAU(ly: number) {
     return ly * Convert.au_ly;

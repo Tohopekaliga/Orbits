@@ -1,7 +1,12 @@
 import { Vector, Convert } from "../math3d";
 import { PointMass } from './point-mass';
-import { isNull } from 'util';
+import { Orbits } from './orbit-types';
 
+//This class contains the majority of the Scary Math (tm) of orbiting.
+//Thus it is somewhat large, with esoteric variable names.
+//the single letter variables are used because that's how they're written
+//in the equations, and if you're not familiar with said equations, then
+//"argument of Periapsis" makes just as much sense as ω (w for simplicity)
 export class Orbiter implements PointMass {
 /*
 e: Eccentricity
@@ -43,6 +48,8 @@ M: Mean Anomaly
 
   name: string;
 
+  orbitalState: Orbits;
+
   //computed rate of change for Mean Anomaly (M)
   protected meanMotion: number = 0;
 
@@ -78,6 +85,7 @@ M: Mean Anomaly
     this.velocity = new Vector();
     this.position = new Vector();
 
+    this.updateOrbitalState();
     this.calculateOrbit();
     this.calculateVectors();
   }
@@ -92,18 +100,55 @@ M: Mean Anomaly
     }
   }
 
-  update(dt:number) {
-    this.M += this.meanMotion * dt;
+  update(dt: number) {
 
-    while (this.M > 2 * Math.PI) {
-      this.M -= 2 * Math.PI;
+    switch (this.orbitalState) {
+      case Orbits.Elliptical:
+      case Orbits.Circular:
+      case Orbits.Suborbital: {
+
+        this.M += this.meanMotion * dt;
+
+        while (this.M > 2 * Math.PI) {
+          this.M -= 2 * Math.PI;
+        }
+
+        while (this.M < 0) {
+          this.M += 2 * Math.PI;
+        }
+
+        this.calculateVectors();
+
+        break;
+      }
+
+      case Orbits.Parabolic: {
+        //TODO: Orbital elements for Parabolic & Hyperbolic
+        this.gravitationalAcceleration(dt);
+        this.position.add(this.velocity.multiply(dt));
+
+        break;
+      }
+
+      case Orbits.Hyperbolic: {
+        this.gravitationalAcceleration(dt);
+        this.position.add(this.velocity.multiply(dt));
+
+        break;
+      }
     }
+  }
 
-    while (this.M < 0) {
-      this.M += 2 * Math.PI;
-    }
+  //Be affected by gravity of the parent body
+  gravitationalAcceleration(dt: number) {
 
-    this.calculateVectors();
+    let localPosition = this.position.subtract(this.parent.position);
+    let altitudeSq = localPosition.magnitudeSq();
+
+    let gravitation = -Convert.G * (this.parent.mass / altitudeSq);
+
+    let gravityMod = localPosition.normalized().multiply(gravitation * dt);
+    this.velocity.add(gravityMod);
   }
   
   peekPosition(dt:number) {
@@ -122,22 +167,48 @@ M: Mean Anomaly
     return ret;
   }
 
-  protected eccentricAnomaly() {
-    const epsilon = 0.00001;
+  protected updateOrbitalState() {
+
+    if (this.e < 1) {
+      this.orbitalState = Orbits.Elliptical;
+    }
+    else if (this.e == 1) {
+      this.orbitalState = Orbits.Parabolic;
+    }
+    else if (this.e > 1) {
+      this.orbitalState = Orbits.Hyperbolic;
+    }
+
+  }
+
+  protected eccentricAnomImpl(sin: any, cos: any, startingE:number) {
     const maxIter = 20;
 
-    //high eccentricity starts at a different value
-    let E = (this.e < 0.8) ? this.M : Math.PI;
-    let F = E - this.e * Math.sin(this.M) - this.M;
+    let E = startingE;
+    let F = E - this.e * sin(this.M) - this.M;
 
     let i = 0;
-    while (Math.abs(F) > epsilon && i < maxIter) {
-      E = E - F / (1 - this.e * Math.cos(E));
-      F = E - this.e * Math.sin(E) - this.M;
+    while (Math.abs(F) > Convert.Epsilon && i < maxIter) {
+      E = E - F / (1 - this.e * cos(E));
+      F = E - this.e * sin(E) - this.M;
       i++;
     }
 
     return E;
+  }
+
+  protected eccentricAnomaly() {
+
+    //high eccentricity starts at a different value to save iterations
+    let E = (this.e < 0.8) ? this.M : Math.PI;
+
+    return this.eccentricAnomImpl(Math.sin, Math.cos, E);
+  }
+
+  protected eccentricAnomalyHyperbolic() {
+
+    return this.eccentricAnomImpl(Math.sinh, Math.cosh, this.M);
+
   }
   
   protected meanAnomalyFromTrue() {
@@ -248,36 +319,117 @@ M: Mean Anomaly
 
   }
 
+  protected ellipticalOrbitalElements(evec: Vector) {
+
+
+    let h = this.position.cross(this.velocity);
+    let nhat = Vector.K.cross(h);
+
+    let speedSq = this.velocity.magnitudeSq();
+    let altitude = this.position.magnitude();
+
+    this.i = Math.acos(h.z / h.magnitude());
+
+    let mechE = speedSq / 2 - this.GM / altitude;
+
+    this.a = -this.GM / (2 * mechE);
+
+    if (Math.abs(this.i) < Convert.Epsilon || Math.abs(this.i) - Math.PI < Convert.Epsilon) {
+
+      this.l = 0;
+
+      if (Math.abs(this.e) < Convert.Epsilon) {
+        this.w = 0;
+      }
+      else {
+        this.w = Math.acos(evec.x / evec.magnitude());
+      }
+    }
+    else {
+      //inclined orbit
+
+      this.l = Math.acos(nhat.x / nhat.magnitude());
+
+      if (nhat.y < 0) {
+        this.l = Math.PI * 2 - this.l;
+      }
+
+      this.w = Math.acos(nhat.dot(evec)) / (nhat.magnitude() * evec.magnitude());
+    }
+
+    if (Math.abs(this.e) < Convert.Epsilon) { //circular orbit
+
+      if (Math.abs(this.i) < Convert.Epsilon) {
+        this.v = Math.acos(this.position.x / this.position.magnitude());
+
+        if (this.position.x > 0) {
+          this.v = Math.PI * 2 - this.v;
+        }
+      }
+      else {
+        this.v = Math.acos(nhat.dot(this.position) / (nhat.magnitude() * this.position.magnitude()));
+        if (nhat.dot(this.velocity) > 0) {
+          this.v = Math.PI * 2 - this.v;
+        }
+      }
+    }
+    else { //eccentric orbit
+
+      if (evec.z < 0) {
+        this.w = Math.PI * 2 - this.w;
+      }
+
+      this.v = Math.acos(evec.dot(this.position) / (evec.magnitude() * this.position.magnitude()));
+
+      if (this.position.dot(this.velocity) < 0) {
+        this.v = Math.PI * 2 - this.v;
+      }
+    }
+
+
+    this.v = Math.acos(evec.dot(this.position) / (this.e * altitude));
+
+    this.meanAnomalyFromTrue();
+  }
+
+  parabolicOrbitalElements(evec: Vector) {
+
+  }
+
+  hyperbolicOrbitalElements(evec: Vector) {
+
+  }
+
   //overwrite elements based on state vectors
   protected recalcElements() {
   
     this.computeGM();
-    
-    let speedSq = this.velocity.magnitudeSq();
-    let altitude = this.position.magnitude();
+
     
     let evec = this.position
-      .multiply(speedSq - this.GM / altitude)
+      .multiply(this.velocity.magnitudeSq() - this.GM / this.position.magnitude())
       .subtract(this.velocity.multiply(this.position.dot(this.velocity)))
       .divide(this.GM);
 
     this.e = evec.magnitude();
-    
-    let mechE = speedSq / 2 - this.GM / altitude;
-    
-    this.a = -this.GM / (2 * mechE);
-    
-    this.w = Math.acos(evec.x / evec.magnitude());
 
-    
-    this.v = Math.acos(evec.dot(this.position) / (this.e * altitude));
+    this.updateOrbitalState();
 
-    //because of using Canvas2d coordinates
-    //this.w *= -1;
-    //this.v *= -1;
-    
-    this.meanAnomalyFromTrue();
-
+    switch (this.orbitalState) {
+      case Orbits.Hyperbolic: {
+        this.hyperbolicOrbitalElements(evec);
+        break;
+      }
+      case Orbits.Parabolic: {
+        this.parabolicOrbitalElements(evec);
+        break;
+      }
+      //All situations except the above are the same.
+      default: {
+        this.ellipticalOrbitalElements(evec);
+        break;
+      }
+    }
     
     this.calculateOrbit();
   }
