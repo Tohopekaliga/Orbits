@@ -1,11 +1,11 @@
-import { Component, ViewChild, ElementRef, OnInit, AfterViewInit } from "@angular/core";
+import { Component, ViewChild, OnInit, AfterViewInit } from "@angular/core";
 import { HostListener } from "@angular/core";
 import { PointMass, Vessel } from "../engine/physics/";
 import { Vector2, Convert } from "../engine/math3d";
 import { StarSystem } from "../engine/star-system";
-import { SystemRenderer } from "../engine/render/system-renderer";
 import { SystemGenerator } from "../engine/system-generator";
 import Sol from "../assets/sol.json";
+import { StarSystemDisplayComponent } from './star-system-display/star-system-display.component';
 
 var mainComponent;
 
@@ -15,7 +15,6 @@ var mainComponent;
   styleUrls: ["./app.component.css"]
 })
 export class AppComponent implements OnInit, AfterViewInit {
-  title = "Space";
   center: Vector2 = new Vector2(
     window.innerWidth / 2,
     window.innerHeight / 2
@@ -26,9 +25,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     window.innerHeight
   );
 
-  // @ts-ignore syntactic sugar warning
-  @ViewChild("systemCanvas") canvasRef: ElementRef;
-  renderer: SystemRenderer = null;
+  @ViewChild("systemDisplay") systemDisplay: StarSystemDisplayComponent;
 
   solSystem: StarSystem = null;
 
@@ -90,11 +87,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    var ctx = this.canvasRef.nativeElement.getContext("2d");
-    this.renderer = new SystemRenderer(ctx);
-    this.renderer.setOrbitMaximum(Convert.KMtoAU(30));
-    this.renderer.setMoonsMaximum(Convert.KMtoAU(1));
-
     this.doSingleRender();
   }
 
@@ -321,33 +313,8 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   render() {
 
-    let center = this.center;
+    this.systemDisplay.render();
 
-    if (this.selectedBody)
-      center = center.subtract(this.selectedBody.position.multiply(this.scale / (1000 * Convert.km_au)));
-
-    this.renderer.setDimensions(
-      center.x,
-      center.y,
-      this.area.x,
-      this.area.y,
-      Convert.KMtoAU(this.scale / 1000) //scale is effectively "pixels per AU", which is a lot easier to look at for render considerations.
-    );
-
-    this.renderer.clear();
-    this.renderer.drawCelestial(this.solSystem.star, "yellow", 5);
-
-    for (let group of this.solSystem.bodies) {
-      this.renderer.drawGroup(group);
-    }
-
-    if (this.selectedBody) {
-      this.renderer.drawCelestial(this.selectedBody, "transparent", 6, "white", true);
-    }
-
-    for (let ship of this.solSystem.ships) {
-      this.renderer.drawShip(ship);
-    }
   }
   
 

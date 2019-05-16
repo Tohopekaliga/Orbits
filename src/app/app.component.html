@@ -26,11 +26,13 @@
     Body: <span>{{selectedBody.name}}</span>
   </div>
   <orb-expanding-search-box class="info" id="planetSearch" #planetSearch [searchResults]="searchResults" (onSearch)="onSearch($event)" (selected)="select($event)"></orb-expanding-search-box>
-  <canvas
+  <orb-star-system-display
     (tap)="onFieldClick($event)"
-    id="systemCanvas"
-    #systemCanvas
-    [width]="area.x"
-    [height]="area.y"
-  ></canvas>
+    #systemDisplay
+    [area]="area"
+    [center]="center"
+    [scale]="scale"
+    [selectedBody]="selectedBody"
+    [starSystem]="solSystem"
+  ></orb-star-system-display>
 </div>
