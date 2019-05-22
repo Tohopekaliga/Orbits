@@ -94,6 +94,16 @@ export class StarSystem {
       }
     }
 
+    //check ships, too
+    for (let c = 0; c < this.ships.length; c++) {
+      let magnitude = point3d.subtract(this.ships[c].position).magnitudeSq();
+
+      if (magnitude < closestMag) {
+        closestMag = magnitude;
+        closestPlanet = this.ships[c];
+      }
+    }
+
     return closestPlanet;
   }
 }

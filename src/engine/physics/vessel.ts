@@ -23,6 +23,10 @@ export class Vessel extends Orbiter {
     //Would be wise to do some planning here if doing
     //a proper trajectory.
 
+    if (this == body) {
+      return;
+    }
+
     this.targetBody = body;
 
     if (this.targetBody) {
