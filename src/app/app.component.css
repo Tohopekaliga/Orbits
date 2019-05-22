@@ -28,3 +28,24 @@
   bottom: 0;
   right: 0;
 }
+
+.contextMenu {
+  background: #303030;
+  border: 1px solid #2a2a2a;
+  color: white;
+  position: fixed;
+  z-index: 100;
+  top: 200px;
+  left: 200px;
+  list-style: none;
+  padding: 1px;
+  visibility: hidden;
+}
+
+.contextMenu.open {
+  visibility: visible;
+}
+
+.contextMenu li {
+  text-align: left;
+}

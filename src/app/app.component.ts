@@ -29,6 +29,9 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   solSystem: StarSystem = null;
 
+  contextMenuText: string = "";
+  contextMenuPos: Vector2 = new Vector2();
+  showContextMenu: boolean = false;
 
   paused: boolean = true;
   simSpeed: number = 0;
@@ -112,20 +115,32 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.simSpeed = speed;
   }
 
-  onFieldClick(event) {
+  protected clickSpaceCoord(x: number, y: number):Vector2 {
     //convert the click location to simulation coordinates.
-    let point = new Vector2(event.center.x - this.center.x, this.area.y - event.center.y - this.center.y)
+    let point = new Vector2(x - this.center.x, this.area.y - y - this.center.y)
     point = point.multiply(Convert.km_au * 1000 / this.scale);
 
-    
-    //account for current body focus
-    if(this.selectedBody) {
-      point = point.sum(this.selectedBody.position);
+    if (this.selectedBody) {
+      return point.sum(this.selectedBody.position);
     }
+    else {
+      return point;
+    }
+  }
+
+  protected pickSpaceObject(x:number, y:number) {
+    let point = this.clickSpaceCoord(x, y);
 
     let leeway = Math.pow(Convert.AUtoKM(10 / this.scale) * 1000, 2);
 
-    let pick = this.solSystem.pickObject(point, leeway, this.selectedBody, true);
+    return this.solSystem.pickObject(point, leeway, this.selectedBody, true);
+  }
+
+  onFieldClick(event) {
+
+    this.showContextMenu = false;
+
+    let pick = this.pickSpaceObject(event.center.x, event.center.y);
 
     if (!pick && event.tapCount == 1) {
       return;
@@ -133,9 +148,19 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.select(pick);
   }
-  
+
+  systemDisplayContext(event) {
+    event.preventDefault();
+
+    let pick = this.pickSpaceObject(event.clientX, event.clientY);
+
+    this.contextMenuText = pick ? pick.name : "(Space)";
+    this.contextMenuPos = new Vector2(event.clientX, event.clientY);
+    this.showContextMenu = true;
+  }
   
   onPinchStart(event) {
+    this.showContextMenu = false;
     this.pinchScale = this.scale;
     this.pinching = true;
     
@@ -166,6 +191,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   onScroll(event) {
+    this.showContextMenu = false;
     let delta = Math.min(Math.max(event.deltaY, -2), 2);
 
     if (delta > 0) {
@@ -181,6 +207,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   onPanStart(event) {
+    this.showContextMenu = false;
     this.panPoint.x = this.center.x;
     this.panPoint.y = this.center.y;
   }
@@ -209,7 +236,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   onSearch(searchString) {
 
     if (searchString.length > 2)
-      this.searchResults = this.systemBodyList.filter((body) => { return body.name.includes(searchString); })
+      this.searchResults = this.solSystem.searchList.filter((body) => { return body.name.includes(searchString); })
     else
       this.searchResults = [];
     
