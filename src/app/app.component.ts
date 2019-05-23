@@ -148,14 +148,24 @@ export class AppComponent implements OnInit, AfterViewInit {
 
     this.select(pick);
   }
-
-  systemDisplayContext(event) {
+  
+  longPress(event) {
+    this.systemDisplayContext(event.center.x, event.center.y);
+    this.contextMenuPos.y -= 40;
+    console.log(event);
+  }
+  
+  rightClick(event) {
     event.preventDefault();
+    this.systemDisplayContext(event.clientX, event.clientY);
+  }
 
-    let pick = this.pickSpaceObject(event.clientX, event.clientY);
+  systemDisplayContext(x:number,y:number) {
+
+    let pick = this.pickSpaceObject(x, y);
 
     this.contextMenuText = pick ? pick.name : "(Space)";
-    this.contextMenuPos = new Vector2(event.clientX, event.clientY);
+    this.contextMenuPos = new Vector2(x, y);
     this.showContextMenu = true;
   }
   
