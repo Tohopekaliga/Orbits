@@ -4,8 +4,8 @@ import { PointMass, Vessel } from "../engine/physics/";
 import { Vector2, Convert } from "../engine/math3d";
 import { StarSystem } from "../engine/star-system";
 import { SystemGenerator } from "../engine/system-generator";
-import Sol from "../assets/sol.json";
 import { StarSystemDisplayComponent } from './star-system-display/star-system-display.component';
+import { SolService } from "./sol.service";
 
 var mainComponent;
 
@@ -28,6 +28,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   @ViewChild("systemDisplay") systemDisplay: StarSystemDisplayComponent;
 
   solSystem: StarSystem = null;
+  systemReady: Boolean = false;
 
   contextMenuText: string = "";
   contextMenuPos: Vector2 = new Vector2();
@@ -70,28 +71,37 @@ export class AppComponent implements OnInit, AfterViewInit {
   systemBodyList: PointMass[] = [];
   searchResults:PointMass[] = [];
 
-  constructor() {
-    
-    this.solSystem = SystemGenerator.loadFromJson(Sol);
+  constructor(private solService: SolService) {
 
+    //this.solSystem = new StarSystem();
+  }
 
-    var vessel = new Vessel(
-      "Orbital 1",
-       0.01671123,
+  loadSol() {
+    this.solService.getSol().subscribe((solData) => {
+      this.solSystem = SystemGenerator.loadFromJson(solData);
+      var vessel = new Vessel(
+        "Orbital 1",
+        0.01671123,
         Convert.AUtoKM(1.00000261) * 1000,
-         102.93768193, 0, 0, 0, this.solSystem.star, 0, 0);
-    this.solSystem.addShip(vessel);
+        102.93768193, 0, 0, 0, this.solSystem.star, 0, 0);
+      this.solSystem.addShip(vessel);
 
+      this.systemReady = true
+
+      this.doSingleRender();
+
+    });
 
   }
 
   ngOnInit() {
     mainComponent = this;
+
+    this.loadSol();
 	
   }
 
   ngAfterViewInit() {
-    this.doSingleRender();
   }
 
   resume() {

@@ -5,6 +5,7 @@
   (wheel)="onScroll($event)"
   (panstart)="onPanStart($event)"
   (pan)="onPan($event)"
+     *ngIf="systemReady"
 >
   <div id="infoPane" class="info">
     <orb-sim-speed-bar [levels]="simSpeedFactor" [paused]="paused"
