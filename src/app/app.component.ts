@@ -32,6 +32,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   contextMenuText: string = "";
   contextMenuPos: Vector2 = new Vector2();
   showContextMenu: boolean = false;
+  contextSelected: PointMass = null;
 
   paused: boolean = true;
   simSpeed: number = 0;
@@ -167,6 +168,12 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.contextMenuText = pick ? pick.name : "(Space)";
     this.contextMenuPos = new Vector2(x, y);
     this.showContextMenu = true;
+    this.contextSelected = pick;
+  }
+
+  contextGo() {
+    this.solSystem.ships[0].goToBody(this.contextSelected);
+    this.showContextMenu = false;
   }
   
   onPinchStart(event) {
@@ -260,7 +267,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.center = this.area.divide(2);
     }
 
-    this.solSystem.ships[0].goToBody(planet);
 
     if (this.paused) {
       this.doSingleRender();
@@ -273,7 +279,6 @@ export class AppComponent implements OnInit, AfterViewInit {
       this.center = this.area.divide(2).subtract(this.selectedBody.position.multiply(this.scale));
       this.selectedBody = null;
 
-      this.solSystem.ships[0].targetBody = null;
     }
   }
   

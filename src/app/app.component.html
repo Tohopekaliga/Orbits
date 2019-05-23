@@ -39,5 +39,6 @@
   ></orb-star-system-display>
   <ul class="contextMenu" id="systemDisplayContextMenu" [ngClass]="{'open':showContextMenu}" [ngStyle]="{'top.px':contextMenuPos.y, 'left.px':contextMenuPos.x}">
     <li>{{contextMenuText}}</li>
+    <li (tap)="contextGo()" *ngIf="contextSelected" class="option">Send Ship Here</li>
   </ul>
 </div>

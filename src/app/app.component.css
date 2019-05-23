@@ -48,4 +48,13 @@
 
 .contextMenu li {
   text-align: left;
+  padding: 1px;
+}
+
+.contextMenu li.option {
+  cursor:pointer;
+}
+
+.contextMenu li.option:hover {
+  background: #808080;
 }
