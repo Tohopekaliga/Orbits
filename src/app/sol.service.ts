@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { StarSystem } from 'src/engine/star-system';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +22,10 @@ export class SolService {
       return of(localSol);
     }
     else {
-      return this.http.get(this.solDataUrl);
+      //intercept the response and shove it into local storage for later.
+      let request = this.http.get(this.solDataUrl);
+      request.subscribe(solData => window.localStorage.setItem("Sol", JSON.stringify(solData)));
+      return request;
     }
     
   }
