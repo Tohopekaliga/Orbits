@@ -1,16 +1,18 @@
 import { AppPage } from './app.po';
 import { browser, logging } from 'protractor';
 
-describe('workspace-project App', () => {
+describe('Orbits App', () => {
   let page: AppPage;
 
   beforeEach(() => {
     page = new AppPage();
   });
 
-  it('should display welcome message', () => {
+  //TODO: Set up E2E Testing once there's menus and things.
+
+  it('should have a title', () => {
     page.navigateTo();
-    expect(page.getTitleText()).toEqual('Welcome to Orbits!');
+    expect(browser.getTitle()).toEqual('Orbits');
   });
 
   afterEach(async () => {
