@@ -1,0 +1,35 @@
+<div id="infoPane" class="info">
+  <orb-sim-speed-bar [levels]="simSpeedFactor" [paused]="paused"
+                     [currentLevel]="simSpeed"
+                     (pauseToggle)="pause()"
+                     (speedClick)="setSimSpeed($event)"></orb-sim-speed-bar>
+  <span id="dateInfo">{{simDate | date:'yyyy-MM-dd HH:mm:ss'}}</span>
+  <br />
+  <span>FPS: {{fps | number:0}} Celestial Bodies: {{solSystem.searchList.length | number:0}}</span>
+  <br />
+  <span>
+    Advance By Days: <button (tap)="advance(1)">1</button><button (tap)="advance(5)">5</button><button (tap)="advance(10)">10</button>
+    <button (tap)="advance(30)">30</button><button (tap)="advance(60)">60</button>
+  </span>
+  <br />
+  <orb-scale-indicator [scale]="scale"></orb-scale-indicator>
+</div>
+<div id="planetInfo" class="info" *ngIf="selectedBody">
+  Body: <span>{{selectedBody.name}}</span>
+</div>
+<orb-expanding-search-box class="info" id="planetSearch" #planetSearch [searchResults]="searchResults" (onSearch)="onSearch($event)" (selected)="select($event)"></orb-expanding-search-box>
+
+<orb-star-system-display #systemDisplay
+  (press)="longPress($event)"
+  (tap)="onFieldClick($event)"
+  (contextmenu)="rightClick($event)"
+  [area]="area"
+  [center]="center"
+  [scale]="scale"
+  [selectedBody]="selectedBody"
+  [starSystem]="solSystem"></orb-star-system-display>
+
+<ul class="contextMenu" id="systemDisplayContextMenu" [ngClass]="{'open':showContextMenu}" [ngStyle]="{'top.px':contextMenuPos.y, 'left.px':contextMenuPos.x}">
+  <li>{{contextMenuText}}</li>
+  <li (tap)="contextGo()" *ngIf="contextSelected" class="option">Send Ship Here</li>
+</ul>

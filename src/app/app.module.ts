@@ -8,6 +8,7 @@ import { SimSpeedBarComponent } from './sim-speed-bar/sim-speed-bar.component';
 import { ExpandingSearchBoxComponent } from './expanding-search-box/expanding-search-box.component';
 import { ScaleIndicatorComponent } from './scale-indicator/scale-indicator.component';
 import { StarSystemDisplayComponent } from './star-system-display/star-system-display.component';
+import { GameComponent } from './game/game.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { StarSystemDisplayComponent } from './star-system-display/star-system-di
     SimSpeedBarComponent,
     ExpandingSearchBoxComponent,
     ScaleIndicatorComponent,
-    StarSystemDisplayComponent
+    StarSystemDisplayComponent,
+    GameComponent
   ],
   imports: [
     BrowserModule,
