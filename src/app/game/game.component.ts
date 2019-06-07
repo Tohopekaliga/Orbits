@@ -42,6 +42,9 @@ export class GameComponent implements OnInit {
     Convert.DaystoSec(60),   //yep
   ];
 
+  //JPL data specifies 1 January, 2000 at 12 noon.
+  startDate: Date = new Date(2000, 1, 1, 12, 0, 0, 0);
+
   simDate: Date = new Date();
   stopDate: Date = new Date();
   advancing: boolean = false;
@@ -66,6 +69,7 @@ export class GameComponent implements OnInit {
   constructor(private loadService: LoadGameService) { }
 
   ngOnInit() {
+    this.simDate = new Date(this.startDate);
     mainComponent = this;
     this.loadSol();
   }
@@ -74,10 +78,22 @@ export class GameComponent implements OnInit {
     this.loadService.newGame().subscribe((system) => {
       this.solSystem = system;
 
+      //make right now be the game date.
+      this.jumpToDate(new Date());
+
       this.systemReady = true;
       this.doSingleRender();
     });
 
+  }
+
+  jumpToDate(newTime: Date) {
+    let dt = newTime.getTime() - this.simDate.getTime();
+    dt /= 1000;
+
+    this.simDate = newTime;
+
+    this.updateSystem(dt);
   }
 
   update() {
