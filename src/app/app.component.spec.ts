@@ -5,6 +5,7 @@ import { SimSpeedBarComponent } from './sim-speed-bar/sim-speed-bar.component';
 import { StarSystemDisplayComponent } from './star-system-display/star-system-display.component';
 import { ScaleIndicatorComponent } from './scale-indicator/scale-indicator.component';
 import { ExpandingSearchBoxComponent } from './expanding-search-box/expanding-search-box.component';
+import { GameComponent } from './game/game.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('AppComponent', () => {
@@ -13,7 +14,7 @@ describe('AppComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-          declarations: [AppComponent, SimSpeedBarComponent, StarSystemDisplayComponent, ScaleIndicatorComponent, ExpandingSearchBoxComponent],
+          declarations: [AppComponent, SimSpeedBarComponent, StarSystemDisplayComponent, ScaleIndicatorComponent, ExpandingSearchBoxComponent, GameComponent],
           imports: [HttpClientTestingModule]
         })
             .compileComponents();

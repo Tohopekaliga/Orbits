@@ -15,8 +15,8 @@ var mainComponent;
 })
 export class GameComponent implements OnInit {
 
-  @Input() center: Vector2;
-  @Input() area: Vector2;
+  @Input() center: Vector2 = new Vector2();
+  @Input() area: Vector2 = new Vector2();
   
   @ViewChild("systemDisplay") systemDisplay: StarSystemDisplayComponent;
 
@@ -305,7 +305,7 @@ export class GameComponent implements OnInit {
 
   onSearch(searchString) {
 
-    if (searchString.length > 2)
+    if (searchString.length > 2 && this.solSystem)
       this.searchResults = this.solSystem.searchList.filter((body) => { return body.name.includes(searchString); })
     else
       this.searchResults = [];
