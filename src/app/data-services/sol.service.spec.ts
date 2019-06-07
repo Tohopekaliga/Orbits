@@ -1,5 +1,4 @@
 import { TestBed, inject } from '@angular/core/testing';
-import { Observable, of } from 'rxjs';
 
 import { SolService } from './sol.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';

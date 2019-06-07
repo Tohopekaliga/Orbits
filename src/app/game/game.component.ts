@@ -1,10 +1,9 @@
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
-import { SolService } from '../sol.service';
 import { Convert, Vector2 } from 'src/engine/math3d';
 import { StarSystem } from 'src/engine/star-system';
-import { SystemGenerator } from "src/engine/system-generator";
-import { Vessel, PointMass } from 'src/engine/physics';
+import { PointMass } from 'src/engine/physics';
 import { StarSystemDisplayComponent } from '../star-system-display/star-system-display.component';
+import { LoadGameService } from '../data-services/load-game.service';
 
 var mainComponent;
 
@@ -64,7 +63,7 @@ export class GameComponent implements OnInit {
   systemBodyList: PointMass[] = [];
   searchResults: PointMass[] = [];
 
-  constructor(private solService: SolService) { }
+  constructor(private loadService: LoadGameService) { }
 
   ngOnInit() {
     mainComponent = this;
@@ -72,22 +71,11 @@ export class GameComponent implements OnInit {
   }
 
   loadSol() {
-    this.solService.getSol().subscribe((solData) => {
-      this.solSystem = SystemGenerator.loadFromJson(solData);
-      var vessel = new Vessel(
-        "Orbital 1",
-        0.01671123,
-        Convert.AUtoKM(1.00000261) * 1000,
-        102.93768193,
-        -0.1513, 0, 0, this.solSystem.star, 0, 0);
-      this.solSystem.addShip(vessel);
+    this.loadService.newGame().subscribe((system) => {
+      this.solSystem = system;
 
-      console.log(vessel);
-
-      this.systemReady = true
-
+      this.systemReady = true;
       this.doSingleRender();
-
     });
 
   }
