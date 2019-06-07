@@ -300,6 +300,19 @@ M: Mean Anomaly
 
   //use the orbital elements to compute mean rate & the ellipse drawing parameters
   protected calculateOrbit() {
+
+    if (this.orbitalState == Orbits.Hyperbolic) {
+      this.calculateHyperbolicOrbit();
+    }
+    else {
+      this.calculateEllipticalOrbit();
+    }
+
+    this.computeMeanMotion();
+
+  }
+
+  protected calculateEllipticalOrbit() {
     //semi-major axis corresponds to radius along apo/peri line
     this.ellipse.rx = this.a;
     //semi-minor axis
@@ -314,8 +327,9 @@ M: Mean Anomaly
 
     this.ellipse.cx = center.x;
     this.ellipse.cy = center.y;
+  }
 
-    this.computeMeanMotion();
+  protected calculateHyperbolicOrbit() {
 
   }
 
