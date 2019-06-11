@@ -1,5 +1,5 @@
 import { PointMass, StellarBody, CelestialBody, OrbitalGroup } from './physics';
-import { StarSystem } from './star-system';
+import { StarSystem } from './space';
 import { Convert } from './math3d';
 
 var groupSpec = [

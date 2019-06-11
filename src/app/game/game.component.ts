@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { Convert, Vector2 } from 'src/engine/math3d';
-import { StarSystem } from 'src/engine/star-system';
+import { StarSystem } from 'src/engine/space';
 import { PointMass } from 'src/engine/physics';
 import { StarSystemDisplayComponent } from '../star-system-display/star-system-display.component';
 import { LoadGameService } from '../data-services/load-game.service';

@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { SystemRenderer } from 'src/engine/render/system-renderer';
 import { Convert, Vector2 } from 'src/engine/math3d';
-import { StarSystem } from 'src/engine/star-system';
+import { StarSystem } from 'src/engine/space';
 import { PointMass } from 'src/engine/physics';
 
 @Component({

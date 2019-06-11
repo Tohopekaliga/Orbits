@@ -1,6 +1,5 @@
-import { PointMass, StellarBody, OrbitalGroup, Vessel } from './physics';
-import { Vector, Vector2 } from './math3d';
-import { SystemRenderer } from './render/system-renderer';
+import { PointMass, StellarBody, OrbitalGroup, Vessel } from '../physics';
+import { Vector, Vector2 } from '../math3d';
 
 //Overall data object holding all bodies in a given Star System (such as Sol)
 export class StarSystem {

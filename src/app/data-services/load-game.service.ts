@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SolService } from './sol.service';
 import { Observable, of } from 'rxjs';
-import { StarSystem } from 'src/engine/star-system';
+import { StarSystem } from 'src/engine/space';
 import { SystemGenerator } from 'src/engine/system-generator';
 import { Vessel } from 'src/engine/physics';
 import { Convert } from 'src/engine/math3d';
