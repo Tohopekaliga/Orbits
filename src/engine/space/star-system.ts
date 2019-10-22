@@ -62,13 +62,15 @@ export class StarSystem {
     if(checkMoons && selectedBody && selectedBody != this.star) {
       
       let parentBody = (selectedBody.parent && selectedBody.parent.moons) ? selectedBody.parent : selectedBody;
-      
-      for(let m = 0; m < parentBody.moons.length; m++) {
-        let magnitude = point3d.subtract(parentBody.moons[m].position).magnitudeSq();
 
-        if (magnitude < closestMag) {
-          closestMag = magnitude;
-          closestPlanet = parentBody.moons[m];
+      if (parentBody.moons) { //ships don't have moons.
+        for (let m = 0; m < parentBody.moons.length; m++) {
+          let magnitude = point3d.subtract(parentBody.moons[m].position).magnitudeSq();
+
+          if (magnitude < closestMag) {
+            closestMag = magnitude;
+            closestPlanet = parentBody.moons[m];
+          }
         }
       }
     }
