@@ -17,7 +17,7 @@ export class GameComponent implements OnInit {
   @Input() center: Vector2 = new Vector2();
   @Input() area: Vector2 = new Vector2();
   
-  @ViewChild("systemDisplay") systemDisplay: StarSystemDisplayComponent;
+  @ViewChild("systemDisplay", { static: true }) systemDisplay: StarSystemDisplayComponent;
 
   solSystem: StarSystem;
   systemReady: boolean = false;

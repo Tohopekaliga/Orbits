@@ -21,7 +21,7 @@ export class AppComponent implements OnInit {
     window.innerHeight
   );
 
-  @ViewChild("game") game: GameComponent;
+  @ViewChild("game", { static: true }) game: GameComponent;
 
   constructor() { }
 

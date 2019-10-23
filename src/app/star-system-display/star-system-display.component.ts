@@ -11,7 +11,7 @@ import { PointMass } from 'src/engine/physics';
 })
 export class StarSystemDisplayComponent implements AfterViewInit {
 
-  @ViewChild("systemCanvas") canvasRef: ElementRef;
+  @ViewChild("systemCanvas", { static: true }) canvasRef: ElementRef;
   renderer: SystemRenderer = null;
 
 
