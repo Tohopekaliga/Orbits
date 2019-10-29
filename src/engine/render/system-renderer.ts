@@ -98,9 +98,15 @@ export class SystemRenderer {
   }
 
   drawCelestial(body: PointMass, color:string = "blue", size:number = 4, stroke:string = "navy", drawVelocity:boolean = false) {
+
+    let scaledRadius = body.radius * (this.scale * 1000);
+
+    if (scaledRadius < size)
+      scaledRadius = size;
+
     this.ctx.beginPath();
 
-    this.drawCircle(body.position, size);
+    this.drawCircle(body.position, scaledRadius);
 
     this.ctx.fillStyle = color;
     this.ctx.fill();
