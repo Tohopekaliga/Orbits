@@ -43,7 +43,7 @@ export class SystemGenerator {
 
     var system = new StarSystem();
 
-    system.star = new StellarBody(data.star.name, data.star.mass, data.star.radius);
+    system.star = new StellarBody(data.star.name, data.star.mass, data.star.radius * 1000);
 
 
     for (let g = 0; g < groupSpec.length; g++) {
@@ -74,7 +74,7 @@ export class SystemGenerator {
           groupData[c].l,
           system.star,
           mass,
-          groupData[c].radius
+          groupData[c].radius ? groupData[c].radius * 1000 : 0
         );
 
         if (groupData[c].satellites != null) {
@@ -88,7 +88,8 @@ export class SystemGenerator {
               moon.i,
               moon.l,
               body,
-              moon.mass ? moon.mass : 0
+              moon.mass ? moon.mass : 0,
+              moon.radius ? moon.radius : 0
             );
 
             system.searchList.push(moonEntity);

@@ -99,7 +99,7 @@ export class SystemRenderer {
 
   drawCelestial(body: PointMass, color:string = "blue", size:number = 4, stroke:string = "navy", drawVelocity:boolean = false) {
 
-    let scaledRadius = body.radius * (this.scale * 1000);
+    let scaledRadius = body.radius * this.scale;
 
     if (scaledRadius < size)
       scaledRadius = size;
