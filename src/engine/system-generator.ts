@@ -89,7 +89,7 @@ export class SystemGenerator {
               moon.l,
               body,
               moon.mass ? moon.mass : 0,
-              moon.radius ? moon.radius : 0
+              moon.radius ? moon.radius * 1000 : 0
             );
 
             system.searchList.push(moonEntity);
