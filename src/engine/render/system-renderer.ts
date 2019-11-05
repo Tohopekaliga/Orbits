@@ -62,7 +62,7 @@ export class SystemRenderer {
 		this.dimensions.height - (this.dimensions.cy - body.ellipse.cy * this.scale + origin.y * this.scale),
 		body.ellipse.rx * this.scale,
 		body.ellipse.ry * this.scale,
-		body.w,
+		-body.w,
 		0,
 		2 * Math.PI
 	);
