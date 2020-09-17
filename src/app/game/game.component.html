@@ -8,8 +8,8 @@
   <span>FPS: {{fps | number:0}} <span *ngIf="solSystem">Celestial Bodies: {{solSystem.searchList.length | number:0}}</span></span>
   <br />
   <span>
-    Advance By Days: <button (tap)="advance(1)">1</button><button (tap)="advance(5)">5</button><button (tap)="advance(10)">10</button>
-    <button (tap)="advance(30)">30</button><button (tap)="advance(60)">60</button>
+    Advance By Days: <button (click)="advance(1)">1</button><button (click)="advance(5)">5</button><button (click)="advance(10)">10</button>
+    <button (click)="advance(30)">30</button><button (click)="advance(60)">60</button>
   </span>
   <br />
   <orb-scale-indicator [scale]="scale"></orb-scale-indicator>
@@ -21,7 +21,7 @@
 
 <orb-star-system-display #systemDisplay
   (press)="longPress($event)"
-  (tap)="onFieldClick($event)"
+  (click)="onFieldClick($event)"
   (contextmenu)="rightClick($event)"
   [area]="area"
   [center]="center"
@@ -31,5 +31,5 @@
 
 <ul class="contextMenu" id="systemDisplayContextMenu" [ngClass]="{'open':showContextMenu}" [ngStyle]="{'top.px':contextMenuPos.y, 'left.px':contextMenuPos.x}">
   <li>{{contextMenuText}}</li>
-  <li (tap)="contextGo()" *ngIf="contextSelected" class="option">Send Ship Here</li>
+  <li (click)="contextGo()" *ngIf="contextSelected" class="option">Send Ship Here</li>
 </ul>
