@@ -1,11 +1,11 @@
 
 <div class="speedBar">
-  <svg viewBox="0 0 50 100" (click)="pause()" [class.currentSpeed]="paused" class="simSpeedIcon">
+  <svg viewBox="0 0 50 100" (tap)="pause()" [class.currentSpeed]="paused" class="simSpeedIcon">
     <rect width="15" height="100" />
     <rect x="35" width="15" height="100" />
   </svg>&nbsp;
   <svg *ngFor="let level of levels; let i = index" class="simSpeedIcon"
-    (click)=speedChange(i) viewBox="0 0 50 100">
+    (tap)=speedChange(i) viewBox="0 0 50 100">
     <polygon points="1,1 49,49 1,100" [class.currentSpeed]="!paused && currentLevel >= i" />
   </svg>
 </div>

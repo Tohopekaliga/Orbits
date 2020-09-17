@@ -1,4 +1,4 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, HammerModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -22,7 +22,8 @@ import { GameComponent } from './game/game.component';
   imports: [
     BrowserModule,
   //  AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    HammerModule
   ],
   providers: [],
   bootstrap: [AppComponent]
