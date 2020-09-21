@@ -5,7 +5,7 @@ import { PointMass } from 'src/engine/physics';
 import { StarSystemDisplayComponent } from '../star-system-display/star-system-display.component';
 import { LoadGameService } from '../data-services/load-game.service';
 
-var mainComponent;
+var mainComponent:GameComponent;
 
 @Component({
   selector: 'orb-game',
@@ -62,7 +62,7 @@ export class GameComponent implements OnInit {
 
   panPoint = new Vector2();
 
-  selectedBody = null;
+  selectedBody:PointMass = null;
   systemBodyList: PointMass[] = [];
   searchResults: PointMass[] = [];
 
@@ -128,7 +128,7 @@ export class GameComponent implements OnInit {
 
   }
 
-  protected updateSystem(dt) {
+  protected updateSystem(dt:number) {
 
     this.solSystem.update(dt);
   }
@@ -147,7 +147,7 @@ export class GameComponent implements OnInit {
     }
   }
 
-  fpsUpdate(dt) {
+  fpsUpdate(dt:number) {
 
     this.frameCounter++;
     this.frameTimer += dt;
@@ -307,7 +307,7 @@ export class GameComponent implements OnInit {
     this.select(pick);
   }
 
-  onSearch(searchString) {
+  onSearch(searchString:string) {
 
     if (searchString.length > 2 && this.solSystem)
       this.searchResults = this.solSystem.searchList.filter((body) => { return body.name.includes(searchString); })
@@ -316,7 +316,7 @@ export class GameComponent implements OnInit {
 
   }
 
-  select(planet) {
+  select(planet:PointMass) {
     this.selectedBody = planet;
 
     if (this.selectedBody) {
