@@ -39,6 +39,9 @@ export class StarSystemDisplayComponent implements AfterViewInit {
     if (this.selectedBody)
       center = center.subtract(this.selectedBody.position.multiply(this.scale / (1000 * Convert.km_au)));
 
+
+    this.renderer.clear();
+
     this.renderer.setDimensions(
       center.x,
       center.y,
@@ -47,19 +50,11 @@ export class StarSystemDisplayComponent implements AfterViewInit {
       Convert.KMtoAU(this.scale / 1000) //scale is effectively "pixels per AU", which is a lot easier to look at for render considerations.
     );
 
-    this.renderer.clear();
-    this.renderer.drawCelestial(this.starSystem.star, "yellow", 5);
-
-    for (let group of this.starSystem.bodies) {
-      this.renderer.drawGroup(group);
-    }
-
     if (this.selectedBody) {
       this.renderer.drawCelestial(this.selectedBody, "transparent", 6, "white", true);
     }
 
-    for (let ship of this.starSystem.ships) {
-      this.renderer.drawShip(ship);
-    }
+    this.starSystem.render(this.renderer);
+
   }
 }

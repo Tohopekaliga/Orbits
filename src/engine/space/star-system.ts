@@ -1,5 +1,6 @@
 import { PointMass, StellarBody, OrbitalGroup, Vessel } from '../physics';
-import { Vector, Vector2 } from '../math3d';
+import { Convert, Vector, Vector2 } from '../math3d';
+import { SystemRenderer } from '../render/system-renderer';
 
 //Overall data object holding all bodies in a given Star System (such as Sol)
 export class StarSystem {
@@ -43,6 +44,19 @@ export class StarSystem {
         ship.update(dt);
       }
 
+    }
+  }
+
+  render(renderer:SystemRenderer) {
+    
+    renderer.drawCelestial(this.star, "yellow", 5);
+
+    for (let group of this.bodies) {
+      renderer.drawGroup(group);
+    }
+
+    for (let ship of this.ships) {
+      renderer.drawShip(ship);
     }
   }
 
